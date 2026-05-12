@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>EMM Trenér · skryté statistiky</title>
+<link rel="stylesheet" href="styles.css?v=7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  .stats-main { max-width: 760px; margin: 30px auto 80px; padding: 0 20px; }
+  .stat-card {
+    background: #fff; border: 1px solid var(--line); border-radius: 18px;
+    padding: 22px 24px; box-shadow: var(--shadow); margin-bottom: 16px;
+  }
+  .stat-card h3 { margin: 0 0 10px; font-size: 16px; }
+  .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 540px) { .stat-row { grid-template-columns: 1fr; } }
+  .big-number { font-size: 44px; font-weight: 900; color: var(--green-dark); line-height: 1.1; }
+  .lblTop { font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); font-weight: 800; }
+  .share-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+  .share-row input {
+    flex: 1; padding: 10px 12px; border: 1px solid var(--line);
+    border-radius: 10px; font-family: monospace; font-size: 13px; background: #f7f8fb;
+  }
+  .qr-wrap { margin-top: 14px; display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+  .qr-wrap img { border-radius: 10px; border: 1px solid var(--line); background: white; padding: 4px; }
+  .topic-list { display: flex; flex-direction: column; gap: 8px; }
+  .topic-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; background: #f7f8fb; border-radius: 10px; font-weight: 700;
+  }
+  .topic-row .num { color: var(--green-dark); font-weight: 900; font-family: monospace; }
+  .hint { font-size: 13px; color: var(--muted); }
+  .secret-bar {
+    background: #fff8e1; border: 1px solid #ffe082; border-radius: 12px;
+    padding: 10px 14px; font-weight: 700; color: #4a3000; margin-bottom: 18px;
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">EMM</span>
+    <span class="title">Skryté statistiky</span>
+  </div>
+  <a href="index.html" class="reset">← do trenéru</a>
+</header>
+
+<main class="stats-main">
+  <div class="secret-bar">Tato stránka je <strong>skrytá</strong> – z hlavní stránky se na ni nedá kliknout. Pošli si její URL stranou: <code>stats.html</code></div>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="lblTop">Návštěv celkem</div>
+      <div class="big-number" id="visits">–</div>
+      <div class="hint">každé otevření hlavní stránky se počítá</div>
+    </div>
+    <div class="stat-card">
+      <div class="lblTop">Spuštěných tréninků</div>
+      <div class="big-number" id="sessions">–</div>
+      <div class="hint">kliknutí na dlaždici tématu</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <h3>Tvůj odkaz ke sdílení</h3>
+    <p class="hint" style="margin:0 0 6px;">Komukoli tohle pošli – uvidí kvíz, ne statistiky.</p>
+    <div class="share-row">
+      <input id="shareLink" readonly>
+      <button class="btn btn-primary" id="copyBtn">Kopírovat</button>
+    </div>
+    <div class="qr-wrap">
+      <img id="qr" alt="QR kód">
+      <div>
+        <div class="lblTop" style="margin-bottom:4px;">QR kód</div>
+        <div class="hint">naskenuj telefonem nebo ulož obrázek a vlož do prezentace, plakátu, e-mailu…</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <h3>Kliknutí na jednotlivá témata</h3>
+    <p class="hint" style="margin:0 0 10px;">Kolikrát si kdo otevřel danou dlaždici.</p>
+    <div class="topic-list" id="topicList"></div>
+  </div>
+
+  <div class="stat-card">
+    <h3>Jak to funguje</h3>
+    <p class="hint" style="margin:0 0 6px;">Návštěvy jsou logované přes veřejnou bezsignupovou službu <code>abacus.jasoncameron.dev</code> – pouze inkrementální čítače, žádné IP, cookies ani analytics.</p>
+    <p class="hint" style="margin:0;">Pokud čísla nepřibývají, služba může být momentálně mimo provoz – kvíz funguje dál bez závislosti na ní.</p>
+  </div>
+</main>
+
+<script src="data.js?v=7"></script>
+<script src="stats.js?v=7"></script>
+</body>
+</html>

@@ -6,6 +6,19 @@ const STORE_KEY = 'emm-trainer-v2';
 const CARDS_PER_LEVEL = 8;
 const HEARTS_PER_LEVEL = 3;
 
+// ─── Anonymní čítače (skryté) ────────────────────────────────
+const COUNTER_NS = 'emm-trainer-jenasin';
+const COUNTER_BASE = 'https://abacus.jasoncameron.dev';
+function bump(key) {
+  // bezpečné, nezatěžuje hlavní logiku
+  try { fetch(`${COUNTER_BASE}/hit/${COUNTER_NS}/${key}`, { mode: 'cors' }).catch(() => {}); } catch (e) {}
+}
+// jeden hit za session prohlížeče, aby refresh nenafukoval čísla
+if (!sessionStorage.getItem('emm-visit-counted')) {
+  bump('visits');
+  sessionStorage.setItem('emm-visit-counted', '1');
+}
+
 const state = load();
 
 function freshTopicState() {
@@ -105,6 +118,8 @@ function renderHome() {
 let session = null;
 
 function startSession(topic) {
+  bump('sessions');
+  bump('topic-' + topic.id);
   const s = state.topics[topic.id];
   const indices = topic.questions.map((_, i) => i);
   // přednost mají málo zvládnuté otázky
