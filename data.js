@@ -123,6 +123,37 @@ Význam pro LP:
    za podmínek:    Σ_j a_ij · x_j  {≤, =, ≥}  b_i,   i = 1..m
                     x_j ≥ 0   (případně volné)
 Komponenty: vektor proměnných x ∈ R^n, vektor cen c, matice koeficientů A (m×n), vektor pravých stran b.`
+      },
+      {
+        q: 'Co je rozhodovací (strukturní) proměnná v LP? Uveďte příklad.',
+        choices: [
+          'Proměnná reprezentující vlastní rozhodnutí – např. x_1 = počet kusů výrobku A, který má firma vyrobit.',
+          'Pomocný parametr modelu, který se nemění – např. cena suroviny v Kč/kg.',
+          'Stochastická veličina s normálním rozdělením – např. denní poptávka.'
+        ],
+        correct: 0,
+        a: `Rozhodovací (strukturní) proměnná x_j vyjadřuje vlastní rozhodnutí, které model optimalizuje.
+Příklady interpretace:
+• x_1 = počet kusů výrobku A, který má firma za týden vyrobit.
+• x_2 = počet hektarů osetých pšenicí.
+• x_ij = množství zboží přepravené z dodavatele i ke spotřebiteli j.
+Hodnoty rozhodovacích proměnných (na rozdíl od parametrů c, A, b) určuje optimalizace.`
+      },
+      {
+        q: 'Uveďte konkrétní příklad LP modelu úlohy o výrobním programu.',
+        choices: [
+          'max z = 30x_1 + 40x_2  za podmínek  2x_1 + x_2 ≤ 100,  x_1 + 3x_2 ≤ 90,  x ≥ 0.',
+          'max z = x_1 · x_2  za podmínek  x_1 + x_2 = 1; jde o nelineární model bez kapacit.',
+          'min z = Σp_i  za podmínek  p_i ∈ [0,1], Σp_i = 1; pravděpodobnostní model bez zisku.'
+        ],
+        correct: 0,
+        a: `Příklad: firma vyrábí 2 výrobky se ziskem 30 Kč/ks (A) a 40 Kč/ks (B).
+• Zdroj 1 – stroj: kapacita 100 hodin; A spotřebuje 2 h/ks, B 1 h/ks → 2x_1 + x_2 ≤ 100.
+• Zdroj 2 – materiál: kapacita 90 kg; A spotřebuje 1 kg/ks, B 3 kg/ks → x_1 + 3x_2 ≤ 90.
+Model:
+   max z = 30·x_1 + 40·x_2
+   za podmínek  2x_1 + x_2 ≤ 100;  x_1 + 3x_2 ≤ 90;  x_1, x_2 ≥ 0.
+Řešení (grafické nebo simplexem) určí optimální výrobní program.`
       }
     ]
   },
@@ -263,6 +294,35 @@ Význam pro LP:
 • Každý bod konvexního mnohostěnu lze vyjádřit jako konvexní kombinaci jeho vrcholů (Krein-Milmanova věta).
 • Alternativní optimum tvoří konvexní kombinaci optimálních vrcholů.
 • Geometrická intuice pro důkaz, proč optimum LP vždy leží ve vrcholu.`
+      },
+      {
+        q: 'Co je přípustný mnohostěn modelu LP? Definujte.',
+        choices: [
+          'Množina všech bodů x ≥ 0, které splňují všechna omezení Ax ≤/=/≥ b. Je konvexní, uzavřený a může být omezený nebo neomezený.',
+          'Množina pouze bázických přípustných řešení, vždy konečná a diskrétní.',
+          'Vnitřek koule kolem počátku v R^n s poloměrem rovným max{b_i}.'
+        ],
+        correct: 0,
+        a: `Přípustný mnohostěn (množina) modelu LP = {x ∈ R^n : Ax ≤/=/≥ b, x ≥ 0}.
+Vlastnosti:
+• Je průnikem konečně mnoha polorovin (a/nebo nadrovin) → konvexní mnohostěn.
+• Je uzavřený a může být omezený (polytop) nebo neomezený (polyedrický kužel atd.).
+• Pokud je neprázdný, je výsledkem řešení modelu jeden ze 4 možných případů (jediné optimum, alternativní, neomezené, neexistence).
+• Vrcholy odpovídají bázickým přípustným řešením.`
+      },
+      {
+        q: 'Uveďte konkrétní příklad alternativního optima v LP.',
+        choices: [
+          'max z = x_1 + x_2  za x_1+x_2 ≤ 10, x ≥ 0 – celá hrana x_1+x_2 = 10 je optimální (ÚF rovnoběžná s omezením).',
+          'max z = x_1 + x_2  za x_1 ≤ 5, x_2 ≤ 5 – optimum (5,5) je jediné, alternativa neexistuje.',
+          'Jediné optimum, kde se protíná víc omezení; vzniká vždy v degenerovaném modelu.'
+        ],
+        correct: 0,
+        a: `Klasický příklad alternativního optima:
+   max z = x_1 + x_2
+   za podmínek  x_1 + x_2 ≤ 10,  x_1 ≤ 8,  x_2 ≤ 8,  x ≥ 0.
+Vrstevnice ÚF (x_1 + x_2 = konst.) je rovnoběžná s aktivním omezením x_1 + x_2 = 10. Celá hrana mezi vrcholy (2,8) a (8,2) je optimální s hodnotou z = 10.
+Alternativní optima = nekonečně mnoho řešení tvořících konvexní kombinaci dvou (nebo více) optimálních vrcholů.`
       }
     ]
   },
@@ -416,6 +476,38 @@ Prevence:
 • Blandovo pravidlo – při výběru vstupující i vystupující proměnné volíme tu s nejmenším indexem; cyklení je vyloučeno.
 • Lexikografická perturbace.
 V praxi je cyklení velmi vzácné; většina implementací používá Blandovo pravidlo jako pojistku.`
+      },
+      {
+        q: 'Co je pivot (klíčový prvek) v simplexové tabulce? Definujte.',
+        choices: [
+          'Prvek na průniku vstupujícího sloupce a vystupujícího řádku. Slouží k Gauss-Jordanově eliminaci – řádek se dělí pivotem.',
+          'Maximální prvek v tabulce; označuje optimum.',
+          'Cenový koeficient v záhlaví tabulky, který se během iterací nemění.'
+        ],
+        correct: 0,
+        a: `Pivot (klíčový prvek) = prvek a_rk simplexové tabulky na průniku:
+• vystupujícího řádku r (určen testem přípustnosti),
+• vstupujícího sloupce k (určen testem optimality).
+Postup výměny báze:
+1) Vystupující řádek vydělíme pivotem (pivot se stane 1).
+2) Od ostatních řádků odečteme vhodný násobek pivotního řádku tak, aby vstupující sloupec měl v ostatních řádcích nuly.
+Po této Gauss-Jordanově eliminaci tvoří vstupující sloupec nový jednotkový vektor báze.`
+      },
+      {
+        q: 'Uveďte konkrétní příklad slack (přídatné) proměnné v reálné úloze.',
+        choices: [
+          'Omezení "spotřeba 2x_1+x_2 ≤ 100 h" → s_1 = 100 − 2x_1 − x_2 = nevyužité strojohodiny; pokud v optimu s_1 = 20, je 20 h volné kapacity.',
+          'Slack = počet vyrobených kusů produktu; vstupuje do ÚF s vlastní cenou jako strukturní proměnná.',
+          'Slack = záporná proměnná, která zmenšuje pravou stranu omezení o pevnou konstantu.'
+        ],
+        correct: 0,
+        a: `Slack (přídatná) proměnná převádí nerovnost ≤ na rovnost.
+Příklad: kapacita stroje 100 h/týden, výrobek A spotřebuje 2 h/ks, B 1 h/ks.
+   2x_1 + x_2 ≤ 100   →   2x_1 + x_2 + s_1 = 100, s_1 ≥ 0
+Interpretace s_1 = nevyužité strojohodiny.
+• s_1 > 0 → stroj má volnou kapacitu (omezení neaktivní).
+• s_1 = 0 → kapacita plně vyčerpána (omezení aktivní, stínová cena ≥ 0).
+V ÚF je c_s = 0 (volná kapacita nepřináší zisk).`
       }
     ]
   },
@@ -546,6 +638,41 @@ Důsledky: slabá dualita slouží k odhadu mezí (např. v B&B), silná k důka
 • Kolik se změní optimální hodnota ÚF, pokud se kapacita zdroje zvýší o jednotku.
 • Maximální cena, kterou je výhodné zaplatit za další jednotku zdroje.
 Příklad: u zdroje s y_i = 50 Kč/h každá další hodina kapacity zvýší zisk o 50 Kč (v intervalu stability báze). Pro plně využitý zdroj y_i > 0, pro nevyužitý y_i = 0.`
+      },
+      {
+        q: 'Uveďte konkrétní ekonomický příklad stínové ceny zdroje.',
+        choices: [
+          'Omezení "100 h práce/týden" má y_1 = 50 Kč/h → další hodina práce zvýší zisk o 50 Kč. Pokud externí pracovník stojí 40 Kč/h, vyplatí se ho najmout.',
+          'Stínová cena = výrobní náklady jednotky produktu; nezávisí na využití kapacity zdroje.',
+          'Stínová cena = pravá strana omezení vynásobená cenovým koeficientem c_j.'
+        ],
+        correct: 0,
+        a: `Příklad výrobní firmy:
+• Zdroj práce: kapacita 100 h/týden, plně využit.
+• Stínová cena y_1 = 50 Kč/h.
+Interpretace:
+• Každá další hodina práce navíc zvýší týdenní zisk o 50 Kč (uvnitř intervalu stability báze).
+• Maximální cena za externí pracovní hodinu, kterou je výhodné akceptovat: 50 Kč/h.
+• Pokud agentura nabízí brigádníka za 40 Kč/h, vyplatí se: marže 10 Kč/h.
+• Při y_2 = 0 (nevyužitá kapacita) další jednotka tohoto zdroje zisk nezvýší – další najímání nemá smysl.`
+      },
+      {
+        q: 'Sestavte duální úlohu k modelu: max z = 5x_1 + 3x_2, 2x_1 + x_2 ≤ 10, x_1 + x_2 ≤ 8, x ≥ 0.',
+        choices: [
+          'min w = 10y_1 + 8y_2,  2y_1 + y_2 ≥ 5,  y_1 + y_2 ≥ 3,  y_1, y_2 ≥ 0.',
+          'max w = 5y_1 + 3y_2,  2y_1 + y_2 ≤ 10,  y_1 + y_2 ≤ 8,  y_1, y_2 ≥ 0.',
+          'min w = 5y_1 + 3y_2,  10y_1 + 8y_2 ≥ 1,  y_1, y_2 volné.'
+        ],
+        correct: 0,
+        a: `Primár (max, omezení ≤, x ≥ 0): max 5x_1 + 3x_2;  2x_1 + x_2 ≤ 10;  x_1 + x_2 ≤ 8.
+Pravidla pro duál:
+• max ↔ min, řádky ↔ sloupce.
+• Pravé strany primáru (10, 8) se stanou cenami duálu.
+• Cenové koeficienty primáru (5, 3) se stanou pravými stranami duálu.
+• Omezení primáru ≤ → duální proměnné y_i ≥ 0; primární proměnné x_j ≥ 0 → duální omezení ≥.
+Duál:
+   min w = 10·y_1 + 8·y_2
+   za podmínek  2y_1 + y_2 ≥ 5,  y_1 + y_2 ≥ 3,  y_1, y_2 ≥ 0.`
       }
     ]
   },
@@ -683,6 +810,42 @@ Aplikace: výběr investičních projektů, lokace skladů, plánování posádk
         a: `Změna a_ij ovlivní jeden sloupec matice A.
 • Sloupec nebázické proměnné: stačí přepočítat ā_j = B⁻¹·a_j a novou redukovanou cenu c̄_j. Pokud zůstane nepříznivá → optimum platí; jinak provedeme simplexovou iteraci.
 • Sloupec bázické proměnné: změna ovlivní samotnou matici B, tedy i B⁻¹ a všechny sloupce v tabulce. Zpravidla je nutná reoptimalizace (přepočet inverze, kontrola přípustnosti i optimality).`
+      },
+      {
+        q: 'Co je interval stability báze vzhledem k pravým stranám?',
+        choices: [
+          'Rozsah ⟨b_i^L; b_i^U⟩, ve kterém zůstává optimální báze zachována (B⁻¹·b ≥ 0). Uvnitř intervalu se ÚF mění lineárně dle y_i.',
+          'Interval cen, ve kterém se optimum nemění; nesouvisí s pravými stranami.',
+          'Vždy ⟨0; +∞⟩; báze je vůči pravým stranám vždy stabilní.'
+        ],
+        correct: 0,
+        a: `Interval stability báze vzhledem k b_i = rozsah, ve kterém může i-tá pravá strana kolísat, aniž by se změnila optimální báze.
+Postup výpočtu: požadujeme B⁻¹·(b + e_i·Δb_i) ≥ 0, řešením soustav nerovností získáme Δb_i^L ≤ Δb_i ≤ Δb_i^U.
+Uvnitř intervalu:
+• Optimální báze (struktura řešení) zůstává.
+• Hodnoty bázických proměnných se lineárně mění.
+• Hodnota ÚF se mění o y_i · Δb_i (kde y_i je stínová cena).
+Mimo interval je nutná reoptimalizace (duální simplex).`
+      },
+      {
+        q: 'Uveďte konkrétní příklad směšovací úlohy s čísly.',
+        choices: [
+          'Krmiva A (10 Kč/kg, 5 % bílkovin) a B (8 Kč/kg, 2 %) → směs 1 kg s ≥ 4 % bílkovin: min 10x_A+8x_B,  5x_A+2x_B ≥ 4,  x_A+x_B = 1,  x ≥ 0.',
+          'Vyrobit maximální množství slitiny bez ohledu na cenu a chemické složení komponent.',
+          'Plánovat počet směn pracovníků v týdnu, aby pokryli poptávku po pracovní síle.'
+        ],
+        correct: 0,
+        a: `Příklad směšovací úlohy – výživa hospodářských zvířat:
+• Krmivo A: cena 10 Kč/kg, obsah bílkovin 5 %.
+• Krmivo B: cena 8 Kč/kg, obsah bílkovin 2 %.
+• Cílová směs: 1 kg s minimálně 4 % bílkovin.
+Proměnné: x_A, x_B = množství krmiva v kg.
+Model:
+   min z = 10·x_A + 8·x_B
+   za podmínek  5·x_A + 2·x_B ≥ 4   (požadavek na bílkoviny)
+                  x_A + x_B = 1     (bilance hmotnosti 1 kg směsi)
+                  x_A, x_B ≥ 0.
+Řešením je nejlevnější směs splňující kvalitativní požadavek.`
       }
     ]
   },
@@ -807,6 +970,37 @@ Důsledek: bázické přípustné řešení má právě m + n − 1 obsazených 
 • Totální unimodularita ⇒ při celočíselných a_i, b_j je optimum automaticky celočíselné.
 • Lze řešit plným simplexem, ale efektivnější je dopravní algoritmus (MODI) využívající tabulkovou strukturu.
 • MODI je v podstatě simplex aplikovaný na tuto speciální reprezentaci.`
+      },
+      {
+        q: 'Co je sazba c_ij v dopravní úloze? Uveďte typické jednotky.',
+        choices: [
+          'Jednotkové dopravní náklady mezi dodavatelem i a spotřebitelem j; jednotky Kč/t, Kč/km·t, h/jednotku.',
+          'Celková kapacita dodavatele i v tunách za týden.',
+          'Počet jednotek, které se v optimálním řešení převezou trasou (i,j).'
+        ],
+        correct: 0,
+        a: `Sazba c_ij = jednotkový dopravní náklad (cena, čas, vzdálenost) na převoz jedné jednotky zboží z dodavatele i k spotřebiteli j.
+Typické jednotky:
+• Kč/t (cena za tunu).
+• Kč/(km·t) – přepočet přes vzdálenost.
+• min/jednotku – pokud minimalizujeme čas.
+• km – při minimalizaci jízdního výkonu.
+Sazba se zadává v tabulce o rozměrech m × n. Tvoří vstupní data úlohy; v ÚF z = Σ c_ij·x_ij hraje roli cenového koeficientu.`
+      },
+      {
+        q: 'Σa_i = 100, Σb_j = 80. Jak vyvážíte dopravní úlohu?',
+        choices: [
+          'Přidáme fiktivního spotřebitele s požadavkem 20 a nulovými sazbami; přepravy do něj značí nevyužitou kapacitu dodavatelů.',
+          'Snížíme kapacity všech dodavatelů rovnoměrně tak, aby Σa = 80; část kapacity ignorujeme.',
+          'Vyvážení není potřeba – nevyváženou DÚ lze řešit přímo dopravním algoritmem.'
+        ],
+        correct: 0,
+        a: `Případ Σa_i > Σb_j (nabídka převyšuje poptávku, zde 100 > 80, přebytek 20):
+1) Přidáme fiktivního (n+1) spotřebitele s požadavkem b_{n+1} = 20.
+2) Sazby c_{i,n+1} = 0 pro všechny i (fiktivní převoz nestojí nic).
+3) Σa_i = Σb_j (100 = 100) → model je vyvážený a řešitelný klasickými metodami.
+4) V optimu hodnoty x_{i,n+1} > 0 značí, kolik každý dodavatel nevyužije své kapacity.
+Obráceně (Σa < Σb): přidáme fiktivního dodavatele.`
       }
     ]
   },
@@ -910,6 +1104,37 @@ Funkčně ekvivalentní MODI; MODI je výpočetně rychlejší (nemusíme stavě
 4) Test optimality MODI (výpočet u_i, v_j, δ_ij).
 5) Je-li optimum → konec. Jinak nejzápornější δ_ij → Danzigův obvod → přepočet hodnot.
 6) Opakovat kroky 4–5 do dosažení optima.`
+      },
+      {
+        q: 'Co jsou duální proměnné u_i a v_j v metodě MODI?',
+        choices: [
+          'Hodnoty duálních proměnných sdružené dopravní úlohy. Pro každé obsazené pole platí u_i + v_j = c_ij; slouží k testu optimality δ_ij.',
+          'Fixní konstanty, vždy u_i = 1, v_j = 0; nesouvisí s testem optimality.',
+          'Skutečné sazby přepravy nakupované na trhu; vstupují přímo do nákladů.'
+        ],
+        correct: 0,
+        a: `u_i (pro dodavatele i, i = 1..m) a v_j (pro spotřebitele j, j = 1..n) jsou hodnoty duálních proměnných dopravní úlohy.
+• Pro každé obsazené (bázické) pole (i,j) platí podmínka u_i + v_j = c_ij.
+• Soustava má m + n − 1 rovnic a m + n neznámých → 1 volíme libovolně (typicky u_1 = 0) a ostatní dopočítáme.
+• Pro neobsazené pole (i,j) spočítáme redukovanou cenu δ_ij = c_ij − (u_i + v_j).
+• Všechna δ_ij ≥ 0 (min) ⇒ aktuální řešení optimální.
+u_i, v_j představují stínové ceny nabídky a poptávky.`
+      },
+      {
+        q: 'Uveďte první kroky výpočtu duálních proměnných v MODI.',
+        choices: [
+          '1) Zvolíme u_1 = 0. 2) Z rovnic u_i + v_j = c_ij pro obsazená pole postupně dopočítáme všechny ostatní u_i a v_j.',
+          '1) Zvolíme náhodné hodnoty u, v. 2) Spočítáme součet všech sazeb v tabulce.',
+          '1) Sestavíme Danzigův obvod. 2) Provedeme transpozici matice nákladů.'
+        ],
+        correct: 0,
+        a: `Postup výpočtu duálních proměnných v MODI:
+1) Pro počáteční bázické řešení s m+n−1 obsazenými poli zvolíme libovolnou hodnotu jedné proměnné, typicky u_1 = 0.
+2) Pomocí rovnic u_i + v_j = c_ij pro obsazená pole postupně dopočítáme zbylých m+n−1 hodnot:
+   - z u_1 = 0 dopočítáme v_j pro každé obsazené pole (1, j),
+   - z těchto v_j pak dopočítáme u_i pro obsazená pole (i, j) atd.
+3) Po dopočítání všech u_i, v_j určíme δ_ij = c_ij − (u_i + v_j) pro neobsazená pole.
+4) Test optimality: všechna δ_ij ≥ 0 (min) ⇒ optimum; jinak iterujeme.`
       }
     ]
   },
@@ -1066,6 +1291,38 @@ Výsledek: garantované optimum, v nejhorším exponenciální čas.`
 • Výroba: cesta robota po desce plošných spojů, CNC obrábění více otvorů.
 • Genetika: sekvenování DNA.
 • VRP (Vehicle Routing) navíc zohledňuje kapacity vozidel a poptávky uzlů – nejbližší k reálné logistice.`
+      },
+      {
+        q: 'Uveďte konkrétní příklad přiřazovací úlohy z praxe.',
+        choices: [
+          'Přidělit 4 pracovníky ke 4 úkolům s minimální celkovou dobou zpracování (c_ij = doba zpracování pracovníka i na úkolu j).',
+          'Najít maximální tok v sociální síti mezi 4 uživateli.',
+          'Minimalizovat náklady na nákup 4 různých surovin při dané poptávce.'
+        ],
+        correct: 0,
+        a: `Praktický příklad přiřazovací úlohy:
+Firma má 4 pracovníky (P1–P4) a 4 úkoly (Ú1–Ú4). Matice c_ij udává dobu (v hodinách), za kterou pracovník i splní úkol j:
+   c =  | 9  2  7  8 |
+        | 6  4  3  7 |
+        | 5  8  1  8 |
+        | 7  6  9  4 |
+Cíl: každý pracovník dostane právě jeden úkol (a každý úkol právě jednoho pracovníka) tak, aby součet dob byl minimální.
+Model: min Σc_ij·x_ij, Σ_j x_ij = 1, Σ_i x_ij = 1, x_ij ∈ {0,1}.
+Řeší se maďarskou metodou; lze také obecným dopravním algoritmem.`
+      },
+      {
+        q: 'Co je perfektní párování (perfect matching) v bipartitním grafu?',
+        choices: [
+          'Párování, kde každý uzel obou stran je spárován s právě jedním uzlem druhé strany; existuje jen pokud |U| = |V|.',
+          'Párování, které používá všechny hrany grafu; tvoří Eulerův tah.',
+          'Náhodné přiřazení uzlů s rovnoměrným pravděpodobnostním rozdělením.'
+        ],
+        correct: 0,
+        a: `V bipartitním grafu G = (U ∪ V, E):
+• Párování M ⊆ E = množina hran, kde žádné dvě nesdílejí společný uzel.
+• Perfektní párování = párování, ve kterém je každý uzel z U i V incidentní s právě jednou hranou M.
+• Předpoklad existence: |U| = |V|, jinak může být maximálně téměř-perfektní.
+Vztah k přiřazovací úloze: každé optimální řešení přiřazovací úlohy odpovídá perfektnímu párování v bipartitním grafu s minimální (resp. maximální) sumou vah hran. Hledání: Hopcroft–Karp pro neohodnocené, maďarská metoda pro ohodnocené.`
       }
     ]
   },
@@ -1214,6 +1471,39 @@ Vlastnosti:
 • Graf je bipartitní ⇔ neobsahuje cyklus liché délky.
 • Modeluje přiřazovací úlohu (jedna strana = pracovníci, druhá = úkoly).
 • Maximální párování v bipartitním grafu se řeší v polynomiálním čase (Hopcroft–Karp, O(E·√V)).`
+      },
+      {
+        q: 'Co je stupeň uzlu (degree) v grafu? Co platí o součtu stupňů?',
+        choices: [
+          'Počet hran incidentních s uzlem. Suma stupňů všech uzlů = 2·|E| (každá hrana se započítá ve dvou koncových uzlech).',
+          'Vzdálenost uzlu od kořene grafu; vždy ≥ 0.',
+          'Pořadové číslo uzlu pro orientaci v grafu; nemá vztah k hranám.'
+        ],
+        correct: 0,
+        a: `Stupeň uzlu deg(v) = počet hran incidentních s v.
+• V neorientovaném grafu: smyčka se započítává 2×.
+• V orientovaném grafu rozlišujeme:
+  - vstupní stupeň deg⁻(v) = počet hran směřujících do v,
+  - výstupní stupeň deg⁺(v) = počet hran směřujících z v.
+Klíčová identita (lemma o podání rukou):  Σ_v deg(v) = 2·|E|.
+Důsledek: počet uzlů s lichým stupněm je vždy sudý. Stupeň využijeme při kontrole existence Eulerova tahu, regulárnosti grafu apod.`
+      },
+      {
+        q: 'Co je komponenta souvislosti grafu? Uveďte příklad.',
+        choices: [
+          'Maximální podgraf, ve kterém mezi každými dvěma uzly existuje cesta. Příklad: dva izolované shluky uzlů bez společné hrany tvoří 2 komponenty.',
+          'Pevné pořadí uzlů během prohledávání BFS / DFS; jedno pro celý graf.',
+          'Speciální typ kostry grafu s nejnižší vahou hran.'
+        ],
+        correct: 0,
+        a: `Komponenta souvislosti grafu = maximální podgraf, ve kterém mezi každými dvěma uzly existuje cesta (jsou vzájemně dosažitelné).
+• Souvislý graf má právě 1 komponentu souvislosti.
+• Nesouvislý graf se rozpadá na ≥ 2 komponenty.
+Příklad: graf {A−B, B−C, D−E} má 2 komponenty souvislosti: {A,B,C} a {D,E}.
+V orientovaném grafu se rozlišuje:
+• Slabě souvislý (souvislý po odebrání orientace),
+• Silně souvislý (každá dvojice uzlů dosažitelná v obou směrech).
+Komponenty silné souvislosti se hledají Tarjanovým / Kosaraju algoritmem.`
       }
     ]
   },
@@ -1371,6 +1661,38 @@ Funkce:
 • Zobrazení rezerv (mezery / přesahy sloupců).
 • Sledování postupu projektu (často plán vs skutečnost ve dvou barvách).
 Doplňuje síťový graf: síť ukazuje logické vazby, Gantt časové rozložení.`
+      },
+      {
+        q: 'Co je milník (milestone) v projektovém řízení? Uveďte příklad.',
+        choices: [
+          'Významná událost s nulovou dobou trvání označující dosažení stavu projektu (např. „schválení projektu", „předání díla", „kolaudace").',
+          'Činnost s nejdelší dobou trvání na kritické cestě.',
+          'Pravidelná kontrola s pevnou dobou trvání (např. 1 týden).'
+        ],
+        correct: 0,
+        a: `Milník = významná událost v projektu s nulovou dobou trvání, která označuje dosažení důležitého stavu nebo cíle.
+Typické příklady:
+• Schválení zadání projektu.
+• Dokončení návrhové fáze.
+• Předání prototypu zákazníkovi.
+• Spuštění do produkce.
+• Předání díla, kolaudace.
+Funkce milníků: kontrolní body pro řízení (sledování postupu, fakturace, rozhodnutí o pokračování). V síťovém grafu se modelují jako uzly s nulovou aktivitou, v Ganttově diagramu jako diamantové značky.`
+      },
+      {
+        q: 'Pro činnost A: ZM = 5, KM = 10, ZP = 8, KP = 13 (dny). Jaká je její celková rezerva RC?',
+        choices: [
+          'RC = KP − KM = 13 − 10 = 3 dny (ekvivalentně ZP − ZM = 8 − 5 = 3). Činnost A lze posunout/prodloužit o 3 dny bez zpoždění projektu.',
+          'RC = KM + KP − ZM − ZP = 10 + 13 − 5 − 8 = 10 dní.',
+          'RC = ZM · KM = 50 dní; označuje, jak dlouho lze činnost vůbec odsouvat.'
+        ],
+        correct: 0,
+        a: `Daná činnost: ZM = 5, KM = 10, ZP = 8, KP = 13 (vše ve dnech).
+Doba trvání t = KM − ZM = 10 − 5 = 5 dní.
+Celková rezerva:
+   RC = KP − KM = 13 − 10 = 3 dny
+   (ekvivalentně RC = ZP − ZM = 8 − 5 = 3 dny).
+Interpretace: činnost A lze odsunout o 3 dny nebo prodloužit o 3 dny, aniž by se prodloužil termín celého projektu. Pokud byla RC = 0, byla by to kritická činnost. Volná rezerva RV ≤ RC by se počítala až ze začátků následujících činností.`
       }
     ]
   }
