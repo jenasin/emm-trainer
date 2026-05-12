@@ -1,9 +1,9 @@
 // ────────────────────────────────────────────────────────────
-//  EMM trenér – jednoduchý spaced-repetition flashcard quiz
+//  EMM trenér – multiple-choice quiz se 3 možnostmi na otázku
 // ────────────────────────────────────────────────────────────
 
-const STORE_KEY = 'emm-trainer-v1';
-const CARDS_PER_LEVEL = 5;      // kolik otázek se vyzkouší v jednom kole
+const STORE_KEY = 'emm-trainer-v2';
+const CARDS_PER_LEVEL = 5;
 const HEARTS_PER_LEVEL = 3;
 
 const state = load();
@@ -13,25 +13,22 @@ function load() {
     const raw = localStorage.getItem(STORE_KEY);
     if (raw) return JSON.parse(raw);
   } catch (e) {}
-  // čerstvý profil
   return {
     xp: 0,
     streak: 0,
     lastPlayDay: null,
     topics: Object.fromEntries(TOPICS.map(t => [t.id, {
-      level: 1,                                  // číslo levelu (1..5)
-      bestScore: 0,                              // nejlepší výsledek (správné/celkem v %)
+      level: 1,
+      bestScore: 0,
       attempts: 0,
       completed: false,
       mastery: Object.fromEntries(t.questions.map((_, i) => [i, 0]))
-      //         skóre 0 = nikdy zodpovězeno, 1 = částečně, 2 = uměl
+      // 0 = nikdy zodpovězeno správně, 1 = částečně, 2 = správně
     }])),
   };
 }
 
-function save() {
-  localStorage.setItem(STORE_KEY, JSON.stringify(state));
-}
+function save() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
 function tickStreak() {
   const today = new Date().toISOString().slice(0, 10);
@@ -42,8 +39,15 @@ function tickStreak() {
   save();
 }
 
-// ─── UI render ────────────────────────────────────────────────
 const $ = (id) => document.getElementById(id);
+
+function shade(hex, p) {
+  const n = parseInt(hex.replace('#',''),16);
+  const r = Math.max(0, Math.min(255, (n>>16) + p));
+  const g = Math.max(0, Math.min(255, ((n>>8)&0xff) + p));
+  const b = Math.max(0, Math.min(255, (n&0xff) + p));
+  return '#'+((r<<16)|(g<<8)|b).toString(16).padStart(6,'0');
+}
 
 function renderTopBar() {
   $('xpVal').textContent = state.xp;
@@ -66,7 +70,7 @@ function renderHome() {
     const card = document.createElement('div');
     card.className = 'tile';
     card.innerHTML = `
-      <div class="banner" style="background:linear-gradient(135deg, ${topic.color}, ${shade(topic.color, -20)})">
+      <div class="banner" style="background:linear-gradient(135deg, ${topic.color}, ${shade(topic.color,-25)})">
         ${s.completed ? '<span class="done">✓ hotovo</span>' : ''}
         <span>${topic.short}</span>
         <span class="level-pill">L${s.level} • ${total} otázek</span>
@@ -76,7 +80,7 @@ function renderHome() {
         <div class="meta">
           <span>${total} otázek</span>
           <span>nejlepší: ${s.bestScore}%</span>
-          <span>uměl jsem: ${mastered}/${total}</span>
+          <span>správně: ${mastered}/${total}</span>
         </div>
         <div class="bar-mini"><div style="width:${progressPct}%"></div></div>
         <div class="start">${s.attempts === 0 ? 'Začít trénink' : 'Pokračovat v tréninku'}</div>
@@ -87,38 +91,29 @@ function renderHome() {
   });
 }
 
-function shade(hex, percent) {
-  const num = parseInt(hex.replace('#', ''), 16);
-  let r = (num >> 16) + percent;
-  let g = ((num >> 8) & 0xff) + percent;
-  let b = (num & 0xff) + percent;
-  r = Math.max(0, Math.min(255, r));
-  g = Math.max(0, Math.min(255, g));
-  b = Math.max(0, Math.min(255, b));
-  return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
-}
-
-// ─── Session logic ───────────────────────────────────────────
+// ─── Session ─────────────────────────────────────────────────
 let session = null;
 
 function startSession(topic) {
-  // vybereme otázky – přednost neumělým & částečně umělým
   const s = state.topics[topic.id];
   const indices = topic.questions.map((_, i) => i);
+  // přednost mají málo zvládnuté otázky
   indices.sort((a, b) => (s.mastery[a] - s.mastery[b]) || (Math.random() - 0.5));
   const queue = indices.slice(0, Math.min(CARDS_PER_LEVEL, topic.questions.length));
 
   session = {
     topic,
-    queue,            // index otázek čekajících v tomto kole
+    queue,
     pos: 0,
     total: queue.length,
     right: 0,
-    partial: 0,
     wrong: 0,
     hearts: HEARTS_PER_LEVEL,
     earned: 0,
-    repeat: [],       // otázky k zopakování v rámci tohoto kola
+    repeat: [],
+    answered: false,
+    firstTry: new Set(queue),  // otázky, které student vidí poprvé
+    order: null,               // promíchané pořadí možností pro aktuální kartu
   };
 
   switchView('quiz');
@@ -130,48 +125,86 @@ function renderCard() {
   const idx = queue[pos];
   const item = topic.questions[idx];
 
+  // promíchat pořadí 3 možností
+  const order = [0,1,2].sort(() => Math.random() - 0.5);
+  session.order = order;
+  session.answered = false;
+
   $('cardTopic').textContent = `${topic.short} · ${topic.title}`;
   $('cardQ').textContent = item.q;
   $('cardA').textContent = item.a;
   $('cardA').classList.add('hidden');
-  $('actionsRate').classList.add('hidden');
-  $('actionsReveal').classList.remove('hidden');
+  $('continueBtn').classList.add('hidden');
 
   $('cardCounter').textContent = `${pos + 1} / ${total}`;
   $('bar').style.width = `${(pos / total) * 100}%`;
-  $('hearts').textContent = '♥ '.repeat(session.hearts).trim() || '✗';
+  $('hearts').textContent = '♥'.repeat(session.hearts) || '·';
+
+  const choicesEl = $('choices');
+  choicesEl.innerHTML = '';
+  order.forEach((origIdx, displayPos) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.textContent = item.choices[origIdx];
+    btn.dataset.idx = origIdx;
+    btn.addEventListener('click', () => pickChoice(origIdx, btn));
+    choicesEl.appendChild(btn);
+  });
 }
 
-function reveal() {
-  $('cardA').classList.remove('hidden');
-  $('actionsReveal').classList.add('hidden');
-  $('actionsRate').classList.remove('hidden');
-}
+function pickChoice(chosenIdx, btn) {
+  if (session.answered) return;
+  session.answered = true;
 
-function rate(score) {
   const { topic, queue, pos } = session;
   const idx = queue[pos];
+  const item = topic.questions[idx];
+  const isRight = chosenIdx === item.correct;
+
+  // označit tlačítka
+  const buttons = document.querySelectorAll('.choice');
+  buttons.forEach(b => {
+    const i = +b.dataset.idx;
+    b.disabled = true;
+    if (i === item.correct) b.classList.add('right');
+    else if (b === btn) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+
   const s = state.topics[topic.id];
-
-  // mastery: max( předchozí, nynější ) – ale špatná odpověď nesmaže předchozí "uměl"
-  if (score > s.mastery[idx]) s.mastery[idx] = score;
-
-  if (score === 2) { session.right++;   session.earned += 10; }
-  else if (score === 1) { session.partial++; session.earned += 5; }
-  else { session.wrong++; session.hearts = Math.max(0, session.hearts - 1); session.repeat.push(idx); }
-
-  state.xp += score === 2 ? 10 : (score === 1 ? 5 : 0);
+  if (isRight) {
+    session.right++;
+    // mastery na 2 jen pokud správně na první pokus v tomto kole;
+    // při opakování v rámci kola se posune jen na 1, aby se příště zobrazila znovu
+    const newScore = session.firstTry.has(idx) ? 2 : Math.max(s.mastery[idx], 1);
+    if (newScore > s.mastery[idx]) s.mastery[idx] = newScore;
+    if (session.firstTry.has(idx)) { session.earned += 10; state.xp += 10; }
+    else { session.earned += 3; state.xp += 3; }
+  } else {
+    session.wrong++;
+    session.hearts = Math.max(0, session.hearts - 1);
+    session.repeat.push(idx);
+    s.mastery[idx] = Math.max(0, Math.min(s.mastery[idx], 1));
+  }
   save();
   renderTopBar();
 
-  // další karta
+  $('cardA').classList.remove('hidden');
+  $('continueBtn').classList.remove('hidden');
+  $('continueBtn').focus();
+}
+
+function next() {
   session.pos++;
   if (session.pos >= session.queue.length) {
-    // pokud zbyly špatné a ještě máme srdce, přidáme je na konec a pokračujeme
     if (session.repeat.length && session.hearts > 0) {
-      session.queue = session.queue.concat(session.repeat);
-      session.repeat = [];
+      // doplň špatně zodpovězené na konec fronty
+      const repeats = session.repeat.slice();
+      session.queue = session.queue.concat(repeats);
       session.total = session.queue.length;
+      session.repeat = [];
+      // tyto opakované již nejsou "first try"
+      repeats.forEach(i => session.firstTry.delete(i));
       renderCard();
       return;
     }
@@ -183,19 +216,17 @@ function rate(score) {
 
 function finishSession() {
   tickStreak();
-  const { topic, total, right, partial } = session;
+  const { topic, total, right } = session;
   const s = state.topics[topic.id];
   s.attempts += 1;
 
-  const correctRate = Math.round(((right + partial * 0.5) / total) * 100);
+  const correctRate = Math.round((right / total) * 100);
   if (correctRate > s.bestScore) s.bestScore = correctRate;
 
-  // postup levelu – pokud více než 80 % "uměl" a žádné srdce neztratil → +1 level
   if (right / total >= 0.8 && session.hearts === HEARTS_PER_LEVEL && s.level < 5) {
     s.level += 1;
   }
 
-  // dokončené téma: všechny otázky alespoň 2
   const masteredAll = Object.values(s.mastery).every(v => v === 2);
   if (masteredAll) s.completed = true;
 
@@ -210,48 +241,41 @@ function finishSession() {
     : (right / total >= 0.8 ? 'Skvěle, postupuješ!' : 'Hotovo, zkus to znovu');
   $('resultSub').textContent = correctRate >= 80
     ? `Úspěšnost ${correctRate}%`
-    : `Úspěšnost ${correctRate}% – zopakuj, ať si to lépe usadíš.`;
+    : `Úspěšnost ${correctRate}% – zopakuj, ať to lépe usadíš.`;
 
   switchView('result');
 }
 
-// ─── View switch ─────────────────────────────────────────────
 function switchView(name) {
-  ['home', 'quiz', 'result'].forEach(v => {
+  ['home','quiz','result'].forEach(v => {
     document.getElementById(v).classList.toggle('hidden', v !== name);
   });
   if (name === 'home') renderHome();
 }
 
-// ─── Buttons ─────────────────────────────────────────────────
-$('revealBtn').addEventListener('click', reveal);
-$('yesBtn').addEventListener('click', () => rate(2));
-$('kindaBtn').addEventListener('click', () => rate(1));
-$('noBtn').addEventListener('click', () => rate(0));
+// ─── Bindings ────────────────────────────────────────────────
+$('continueBtn').addEventListener('click', next);
 $('backBtn').addEventListener('click', () => { session = null; switchView('home'); });
 $('repeatBtn').addEventListener('click', () => startSession(session.topic));
 $('homeBtn').addEventListener('click', () => switchView('home'));
 $('resetBtn').addEventListener('click', () => {
-  if (confirm('Smazat veškerý pokrok?')) {
-    localStorage.removeItem(STORE_KEY);
-    location.reload();
-  }
+  if (confirm('Smazat veškerý pokrok?')) { localStorage.removeItem(STORE_KEY); location.reload(); }
 });
 
-// klávesové zkratky: mezerník = odhalit, 1/2/3 = ohodnotit
+// klávesy: 1/2/3 vyberou možnost, mezerník/Enter = pokračovat
 document.addEventListener('keydown', (e) => {
   if (document.getElementById('quiz').classList.contains('hidden')) return;
-  if (e.key === ' ' || e.key === 'Enter') {
-    if (!$('cardA').classList.contains('hidden')) return;
+  if (!session) return;
+  if (!session.answered) {
+    if (['1','2','3'].includes(e.key)) {
+      const btns = document.querySelectorAll('.choice');
+      const i = +e.key - 1;
+      if (btns[i]) btns[i].click();
+    }
+  } else if (e.key === ' ' || e.key === 'Enter') {
     e.preventDefault();
-    reveal();
-    return;
+    next();
   }
-  if ($('cardA').classList.contains('hidden')) return;
-  if (e.key === '1') rate(0);
-  if (e.key === '2') rate(1);
-  if (e.key === '3') rate(2);
 });
 
-// init
 renderHome();
