@@ -156,10 +156,32 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); fo
 .choice.dim { opacity: .55; }
 
 .card-answer {
-  background: #f7faf2; border-left: 5px solid var(--green);
-  padding: 16px 18px; border-radius: 12px; white-space: pre-wrap;
+  background: #fbfcfa; border: 1px solid var(--line); border-left: 5px solid var(--green);
+  padding: 14px 16px; border-radius: 12px;
   line-height: 1.55; font-size: 15px; color: #2a2d36;
   margin: 0 0 18px;
+}
+.ans-head {
+  font-weight: 900; font-size: 16px; margin-bottom: 8px;
+  letter-spacing: .2px;
+}
+.ans-good { color: var(--green-dark); }
+.ans-bad  { color: var(--red); }
+.ans-section { margin: 10px 0; }
+.ans-section .lbl {
+  display: inline-block; font-size: 11px; font-weight: 800;
+  letter-spacing: .6px; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 4px;
+}
+.ans-pill {
+  padding: 10px 12px; border-radius: 10px; font-weight: 700;
+  line-height: 1.4; border: 1px solid var(--line);
+}
+.ans-pill-right { background: #e6f7d8; border-color: var(--green); color: #1f4e00; }
+.ans-pill-wrong { background: #ffe1e1; border-color: var(--red); color: #6a0e0e; }
+.ans-detail {
+  white-space: pre-wrap; font-size: 14.5px; line-height: 1.55;
+  color: #2a2d36;
 }
 
 .card-actions {

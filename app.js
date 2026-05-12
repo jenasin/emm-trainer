@@ -142,7 +142,7 @@ function renderCard() {
 
   $('cardTopic').textContent = `${topic.short} · ${topic.title}`;
   $('cardQ').textContent = item.q;
-  $('cardA').textContent = item.a;
+  $('cardA').innerHTML = '';
   $('cardA').classList.add('hidden');
   $('continueBtn').classList.add('hidden');
 
@@ -160,6 +160,12 @@ function renderCard() {
     btn.addEventListener('click', () => pickChoice(origIdx, btn));
     choicesEl.appendChild(btn);
   });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
 }
 
 function pickChoice(chosenIdx, btn) {
@@ -180,6 +186,22 @@ function pickChoice(chosenIdx, btn) {
     else if (b === btn) b.classList.add('wrong');
     else b.classList.add('dim');
   });
+
+  // sestav vysvětlení do spodní bubliny
+  const correctText = item.choices[item.correct];
+  const chosenText = item.choices[chosenIdx];
+  const parts = [];
+  if (isRight) {
+    parts.push(`<div class="ans-head ans-good">✓ Správně!</div>`);
+    parts.push(`<div class="ans-section"><span class="lbl">Správná odpověď</span><div class="ans-pill ans-pill-right">${escapeHtml(correctText)}</div></div>`);
+    parts.push(`<div class="ans-section"><span class="lbl">Proč to tak je</span><div class="ans-detail">${escapeHtml(item.a)}</div></div>`);
+  } else {
+    parts.push(`<div class="ans-head ans-bad">✗ Špatně</div>`);
+    parts.push(`<div class="ans-section"><span class="lbl">Tvoje odpověď</span><div class="ans-pill ans-pill-wrong">${escapeHtml(chosenText)}</div></div>`);
+    parts.push(`<div class="ans-section"><span class="lbl">Správně mělo být</span><div class="ans-pill ans-pill-right">${escapeHtml(correctText)}</div></div>`);
+    parts.push(`<div class="ans-section"><span class="lbl">Proč</span><div class="ans-detail">${escapeHtml(item.a)}</div></div>`);
+  }
+  $('cardA').innerHTML = parts.join('');
 
   const s = state.topics[topic.id];
   if (isRight) {
