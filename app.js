@@ -11,6 +11,8 @@ const COUNTER_NS = 'emm-trainer-jenasin';
 const COUNTER_BASE = 'https://abacus.jasoncameron.dev';
 
 function bump(key, cb) {
+  // admin (vlastník) – nikdy se nepočítá
+  if (document.cookie.indexOf('emm-admin=') !== -1) return;
   try {
     fetch(`${COUNTER_BASE}/hit/${COUNTER_NS}/${key}`, { mode: 'cors' })
       .then(r => r.json())
@@ -48,25 +50,38 @@ function newUid() {
   return r(4) + '-' + r(4) + '-' + r(4);
 }
 
-// Identita návštěvníka (cookie platí 365 dní)
+// Admin režim: jednorázovou návštěvou ?admin se prohlížeč navždy vyloučí ze sledování.
+const params = new URLSearchParams(location.search);
+if (params.has('admin')) {
+  setCookie('emm-admin', '1', 3650); // 10 let
+  history.replaceState({}, '', location.pathname);
+}
+const isAdmin = !!getCookie('emm-admin');
+window.EMM_IS_ADMIN = isAdmin;
+
+// Identita běžného návštěvníka (cookie 365 dní); admin si UID nestaví
 let visitorId = getCookie('emm-visitor');
-const isFirstVisit = !visitorId;
+const isFirstVisit = !visitorId && !isAdmin;
 if (isFirstVisit) {
   visitorId = newUid();
   setCookie('emm-visitor', visitorId, 365);
 }
 window.EMM_VISITOR_ID = visitorId;
 
-// 2 čítače: unikátní návštěvníci × všechny návštěvy stránky
-if (isFirstVisit) {
+if (isAdmin) {
+  // admin – jen načti hodnotu pro zobrazení, NIC neinkrementuj
+  readCounter('visits', setVisits);
+  const el = document.getElementById('visitsVal');
+  if (el) el.title = 'Tvůj prohlížeč je v admin režimu – tvoje návštěvy se nepočítají';
+} else if (isFirstVisit) {
   // nový návštěvník → +1 unikátní + +1 pageview
   bump('visits', v => setVisits(v));
   bump('pageviews');
-  bump('user-' + visitorId); // 1× na uživatele = známka, že existuje
+  bump('user-' + visitorId);
 } else {
-  // známý návštěvník → +1 jen pageview
+  // známý návštěvník → jen pageview (visits zůstává)
   bump('pageviews');
-  bump('user-' + visitorId); // počet návštěv tohoto uživatele
+  bump('user-' + visitorId);
   readCounter('visits', setVisits);
 }
 

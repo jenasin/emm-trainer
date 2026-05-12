@@ -99,6 +99,26 @@
     <div class="topic-list" id="topicList"></div>
   </div>
 
+  <div class="stat-card" id="adminBox" style="display:none">
+    <h3>Admin nástroje</h3>
+    <p class="hint" style="margin:0 0 8px;">Tvůj prohlížeč je v admin režimu (cookie <code>emm-admin</code>) – tvé návštěvy se nezapočítávají.</p>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="btn btn-warn" id="resetBtn">↺ Vynulovat všechny čítače na 0</button>
+      <button class="btn btn-ghost" id="unadminBtn">Zrušit admin režim (začít se počítat)</button>
+    </div>
+    <p class="hint" id="resetStatus" style="margin:8px 0 0;"></p>
+  </div>
+
+  <div class="stat-card" id="noAdminBox" style="display:none">
+    <h3>Aktivace admin režimu</h3>
+    <p class="hint" style="margin:0 0 8px;">Aby se tvůj prohlížeč nezapočítával, otevři jednou tuto adresu:</p>
+    <div class="share-row">
+      <input id="adminLink" readonly>
+      <button class="btn btn-primary" id="copyAdminBtn">Kopírovat</button>
+    </div>
+    <p class="hint" style="margin:8px 0 0;">Stačí otevřít, cookie se nastaví automaticky a URL se vyčistí.</p>
+  </div>
+
   <div class="stat-card">
     <h3>Jak to funguje</h3>
     <p class="hint" style="margin:0 0 6px;">Návštěvy a tréninky jsou logované přes veřejnou bezsignupovou službu <code>abacus.jasoncameron.dev</code> – jen inkrementální čítače, žádné IP ani analytics.</p>
@@ -107,7 +127,7 @@
   </div>
 </main>
 
-<script src="data.js?v=10"></script>
-<script src="stats.js?v=10"></script>
+<script src="data.js?v=11"></script>
+<script src="stats.js?v=11"></script>
 </body>
 </html>

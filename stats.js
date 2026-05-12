@@ -17,6 +17,15 @@ async function readCounter(key) {
   } catch (e) { return '?'; }
 }
 
+async function resetCounter(key) {
+  // abacus: /set/<ns>/<key>/<value> umí nastavit konkrétní hodnotu
+  try {
+    const r = await fetch(`${BASE}/set/${NS}/${key}/0`);
+    const d = await r.json();
+    return d.value;
+  } catch (e) { return null; }
+}
+
 (async function init() {
   document.getElementById('shareLink').value = SITE_URL;
   document.getElementById('qr').src =
@@ -57,4 +66,44 @@ async function readCounter(key) {
     const el = list.querySelector(`[data-t="${t.id}"]`);
     if (el) el.textContent = results[i];
   });
+
+  // ─── Admin sekce ────────────────────────────────────────
+  const isAdmin = !!getCookie('emm-admin');
+  document.getElementById('adminBox').style.display   = isAdmin ? 'block' : 'none';
+  document.getElementById('noAdminBox').style.display = isAdmin ? 'none' : 'block';
+
+  if (!isAdmin) {
+    const adminUrl = SITE_URL + '?admin';
+    const inp = document.getElementById('adminLink');
+    inp.value = adminUrl;
+    document.getElementById('copyAdminBtn').addEventListener('click', () => {
+      inp.select(); navigator.clipboard?.writeText(adminUrl);
+      const b = document.getElementById('copyAdminBtn');
+      const t = b.textContent; b.textContent = 'Zkopírováno';
+      setTimeout(() => (b.textContent = t), 1500);
+    });
+  } else {
+    document.getElementById('resetBtn').addEventListener('click', async () => {
+      if (!confirm('Opravdu vynulovat všechny čítače? Toto nelze vrátit.')) return;
+      const keys = ['visits', 'pageviews', 'sessions', ...TOPICS.map(t => 'topic-' + t.id)];
+      const status = document.getElementById('resetStatus');
+      status.textContent = 'Resetuji…';
+      const res = await Promise.all(keys.map(resetCounter));
+      const ok = res.filter(v => v !== null).length;
+      status.textContent = `Hotovo: ${ok}/${keys.length} čítačů vynulováno. Obnov stránku pro nová čísla.`;
+      // překreslit
+      document.getElementById('visits').textContent    = await readCounter('visits');
+      document.getElementById('pageviews').textContent = await readCounter('pageviews');
+      document.getElementById('sessions').textContent  = await readCounter('sessions');
+      TOPICS.forEach(async t => {
+        const el = list.querySelector(`[data-t="${t.id}"]`);
+        if (el) el.textContent = await readCounter('topic-' + t.id);
+      });
+    });
+    document.getElementById('unadminBtn').addEventListener('click', () => {
+      document.cookie = 'emm-admin=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+      alert('Admin režim zrušen. Tvoje další návštěva už se započítá.');
+      location.reload();
+    });
+  }
 })();
