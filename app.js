@@ -3,29 +3,37 @@
 // ────────────────────────────────────────────────────────────
 
 const STORE_KEY = 'emm-trainer-v2';
-const CARDS_PER_LEVEL = 5;
+const CARDS_PER_LEVEL = 8;
 const HEARTS_PER_LEVEL = 3;
 
 const state = load();
 
+function freshTopicState() {
+  return { level: 1, bestScore: 0, attempts: 0, completed: false, mastery: {} };
+}
+
+function migrate(s) {
+  if (!s.topics) s.topics = {};
+  TOPICS.forEach(t => {
+    if (!s.topics[t.id]) s.topics[t.id] = freshTopicState();
+    const ts = s.topics[t.id];
+    if (!ts.mastery) ts.mastery = {};
+    // doplň záznam pro každou aktuální otázku tématu (0 = nezvládnuto)
+    t.questions.forEach((_, i) => {
+      if (ts.mastery[i] === undefined) ts.mastery[i] = 0;
+    });
+    // přepočet completed podle aktuálního počtu otázek
+    ts.completed = t.questions.every((_, i) => ts.mastery[i] === 2);
+  });
+  return s;
+}
+
 function load() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) return migrate(JSON.parse(raw));
   } catch (e) {}
-  return {
-    xp: 0,
-    streak: 0,
-    lastPlayDay: null,
-    topics: Object.fromEntries(TOPICS.map(t => [t.id, {
-      level: 1,
-      bestScore: 0,
-      attempts: 0,
-      completed: false,
-      mastery: Object.fromEntries(t.questions.map((_, i) => [i, 0]))
-      // 0 = nikdy zodpovězeno správně, 1 = částečně, 2 = správně
-    }])),
-  };
+  return migrate({ xp: 0, streak: 0, lastPlayDay: null, topics: {} });
 }
 
 function save() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
@@ -60,6 +68,8 @@ function renderHome() {
   grid.innerHTML = '';
   const done = TOPICS.filter(t => state.topics[t.id].completed).length;
   $('doneOf').textContent = `${done} z ${TOPICS.length}`;
+  const qTotal = TOPICS.reduce((sum, t) => sum + t.questions.length, 0);
+  $('qTotal').textContent = qTotal;
 
   TOPICS.forEach(topic => {
     const s = state.topics[topic.id];
