@@ -1,6 +1,6 @@
 // Skryté statistiky – načte čítače a vykreslí
 
-const NS = 'emm-trainer-jenasin';
+const NS = 'emm-trainer-jenasin-v2';
 const BASE = 'https://abacus.jasoncameron.dev';
 const SITE_URL = 'https://jenasin.github.io/emm-trainer/';
 
@@ -53,6 +53,22 @@ async function resetCounter(key) {
   document.getElementById('pageviews').textContent = await readCounter('pageviews');
   document.getElementById('sessions').textContent  = await readCounter('sessions');
 
+  // Aktuálně online – sečte heartbeaty z poslední ukončené minuty a aktuální
+  async function readOnline() {
+    const minute = Math.floor(Date.now() / 60000);
+    const [prev, curr] = await Promise.all([
+      readCounter('online-m' + (minute - 1)),
+      readCounter('online-m' + minute)
+    ]);
+    const num = v => (typeof v === 'number' && v > 0) ? v : 0;
+    // poslední ukončená minuta dává nejlepší odhad; aktuální může být ještě nepokrytá
+    return Math.max(num(prev), num(curr));
+  }
+  const onlineEl = document.getElementById('online');
+  async function refreshOnline() { onlineEl.textContent = await readOnline(); }
+  await refreshOnline();
+  setInterval(refreshOnline, 30000);
+
   // per-topic counters
   const list = document.getElementById('topicList');
   for (const t of TOPICS) {
@@ -83,23 +99,8 @@ async function resetCounter(key) {
       setTimeout(() => (b.textContent = t), 1500);
     });
   } else {
-    document.getElementById('resetBtn').addEventListener('click', async () => {
-      if (!confirm('Opravdu vynulovat všechny čítače? Toto nelze vrátit.')) return;
-      const keys = ['visits', 'pageviews', 'sessions', ...TOPICS.map(t => 'topic-' + t.id)];
-      const status = document.getElementById('resetStatus');
-      status.textContent = 'Resetuji…';
-      const res = await Promise.all(keys.map(resetCounter));
-      const ok = res.filter(v => v !== null).length;
-      status.textContent = `Hotovo: ${ok}/${keys.length} čítačů vynulováno. Obnov stránku pro nová čísla.`;
-      // překreslit
-      document.getElementById('visits').textContent    = await readCounter('visits');
-      document.getElementById('pageviews').textContent = await readCounter('pageviews');
-      document.getElementById('sessions').textContent  = await readCounter('sessions');
-      TOPICS.forEach(async t => {
-        const el = list.querySelector(`[data-t="${t.id}"]`);
-        if (el) el.textContent = await readCounter('topic-' + t.id);
-      });
-    });
+    const cur = document.getElementById('curNs');
+    if (cur) cur.textContent = NS;
     document.getElementById('unadminBtn').addEventListener('click', () => {
       document.cookie = 'emm-admin=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
       alert('Admin režim zrušen. Tvoje další návštěva už se započítá.');

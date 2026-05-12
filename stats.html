@@ -52,6 +52,12 @@
 <main class="stats-main">
   <div class="secret-bar">Tato stránka je <strong>skrytá</strong> – z hlavní stránky se na ni nedá kliknout. Pošli si její URL stranou: <code>stats.html</code></div>
 
+  <div class="stat-card" style="background:linear-gradient(135deg,#e6f7d8,#fff); border-color:var(--green);">
+    <div class="lblTop" style="color:var(--green-dark);">Právě online <span style="font-weight:600; text-transform:none; color:var(--ink-soft);">(aktivní v posledních ~60 s)</span></div>
+    <div class="big-number" id="online">–</div>
+    <div class="hint">heartbeat každou minutu z otevřené stránky; aktualizuje se každých 30 s</div>
+  </div>
+
   <div class="stat-row">
     <div class="stat-card">
       <div class="lblTop">Unikátní návštěvníci</div>
@@ -102,11 +108,11 @@
   <div class="stat-card" id="adminBox" style="display:none">
     <h3>Admin nástroje</h3>
     <p class="hint" style="margin:0 0 8px;">Tvůj prohlížeč je v admin režimu (cookie <code>emm-admin</code>) – tvé návštěvy se nezapočítávají.</p>
+    <p class="hint" style="margin:0 0 8px;"><strong>Reset čítačů:</strong> abacus.jasoncameron.dev vyžaduje admin token, který u auto-vytvořených klíčů nemáme. Reset proto děláme <strong>bumpem suffixu namespace</strong> v kódu (např. <code>v2 → v3</code>) – tím všechny čítače naběhnou znovu od 0. Aktuální namespace: <code id="curNs">–</code>.</p>
+    <p class="hint" style="margin:0 0 12px;">Pokud chceš další reset, napiš a já bumpnu na další verzi (jednoduchý 1-řádkový deploy).</p>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="btn btn-warn" id="resetBtn">↺ Vynulovat všechny čítače na 0</button>
       <button class="btn btn-ghost" id="unadminBtn">Zrušit admin režim (začít se počítat)</button>
     </div>
-    <p class="hint" id="resetStatus" style="margin:8px 0 0;"></p>
   </div>
 
   <div class="stat-card" id="noAdminBox" style="display:none">
@@ -127,7 +133,7 @@
   </div>
 </main>
 
-<script src="data.js?v=11"></script>
-<script src="stats.js?v=11"></script>
+<script src="data.js?v=12"></script>
+<script src="stats.js?v=12"></script>
 </body>
 </html>

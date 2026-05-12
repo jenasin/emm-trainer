@@ -7,7 +7,8 @@ const CARDS_PER_LEVEL = 8;
 const HEARTS_PER_LEVEL = 3;
 
 // ─── Anonymní čítače (visits, sessions, topic-*) ─────────────
-const COUNTER_NS = 'emm-trainer-jenasin';
+// Bump suffixu (v2 → v3 …) v obou souborech = úplný reset všech čítačů.
+const COUNTER_NS = 'emm-trainer-jenasin-v2';
 const COUNTER_BASE = 'https://abacus.jasoncameron.dev';
 
 function bump(key, cb) {
@@ -84,6 +85,35 @@ if (isAdmin) {
   bump('user-' + visitorId);
   readCounter('visits', setVisits);
 }
+
+// ─── Online heartbeat ────────────────────────────────────────
+// Pro každou minutu existuje klíč online-m<minuta>. Počet aktivních uživatelů
+// se čte jako počet hitů v poslední celé minutě.
+async function refreshOnlineUI() {
+  const minute = Math.floor(Date.now() / 60000);
+  try {
+    const [prev, curr] = await Promise.all([
+      fetch(`${COUNTER_BASE}/get/${COUNTER_NS}/online-m${minute - 1}`).then(r => r.json()).then(d => d.value || 0).catch(() => 0),
+      fetch(`${COUNTER_BASE}/get/${COUNTER_NS}/online-m${minute}`).then(r => r.json()).then(d => d.value || 0).catch(() => 0)
+    ]);
+    const n = Math.max(prev, curr);
+    const el = document.getElementById('onlineVal');
+    if (el) el.textContent = n;
+  } catch (e) {}
+}
+function sendHeartbeat() {
+  if (document.hidden) return;
+  // i admin se počítá do online (čistě informativní zobrazení), ostatní bumps jsou pro něj vypnuté
+  const minute = Math.floor(Date.now() / 60000);
+  fetch(`${COUNTER_BASE}/hit/${COUNTER_NS}/online-m${minute}`, { mode: 'cors' })
+    .then(() => refreshOnlineUI())
+    .catch(() => {});
+}
+sendHeartbeat();
+refreshOnlineUI();
+setInterval(sendHeartbeat, 60000);
+setInterval(refreshOnlineUI, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { sendHeartbeat(); refreshOnlineUI(); } });
 
 const state = load();
 
