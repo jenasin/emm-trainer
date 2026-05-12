@@ -4,6 +4,11 @@ const NS = 'emm-trainer-jenasin';
 const BASE = 'https://abacus.jasoncameron.dev';
 const SITE_URL = 'https://jenasin.github.io/emm-trainer/';
 
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()[\]\\/+^]/g,'\\$&') + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
 async function readCounter(key) {
   try {
     const r = await fetch(`${BASE}/get/${NS}/${key}`);
@@ -27,8 +32,17 @@ async function readCounter(key) {
     setTimeout(() => (b.textContent = t), 1500);
   });
 
-  document.getElementById('visits').textContent = await readCounter('visits');
-  document.getElementById('sessions').textContent = await readCounter('sessions');
+  // moje cookie ID
+  const myUid = getCookie('emm-visitor') || '(zatím žádná návštěva hlavní stránky)';
+  const myUidEl = document.getElementById('myUid');
+  if (myUidEl) myUidEl.textContent = myUid;
+  const demo = document.getElementById('cookieDemo');
+  if (demo) demo.textContent = myUid;
+
+  // čítače
+  document.getElementById('visits').textContent    = await readCounter('visits');
+  document.getElementById('pageviews').textContent = await readCounter('pageviews');
+  document.getElementById('sessions').textContent  = await readCounter('sessions');
 
   // per-topic counters
   const list = document.getElementById('topicList');

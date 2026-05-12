@@ -54,14 +54,26 @@
 
   <div class="stat-row">
     <div class="stat-card">
-      <div class="lblTop">Návštěv celkem</div>
+      <div class="lblTop">Unikátní návštěvníci</div>
       <div class="big-number" id="visits">–</div>
-      <div class="hint">každé otevření hlavní stránky se počítá</div>
+      <div class="hint">každý prohlížeč/cookie = jeden zápočet (platnost 365 dní)</div>
     </div>
+    <div class="stat-card">
+      <div class="lblTop">Celkem návštěv (pageviews)</div>
+      <div class="big-number" id="pageviews">–</div>
+      <div class="hint">každé otevření stránky, i opakovaná návštěva</div>
+    </div>
+  </div>
+  <div class="stat-row">
     <div class="stat-card">
       <div class="lblTop">Spuštěných tréninků</div>
       <div class="big-number" id="sessions">–</div>
       <div class="hint">kliknutí na dlaždici tématu</div>
+    </div>
+    <div class="stat-card">
+      <div class="lblTop">Moje ID v cookie</div>
+      <div class="big-number" id="myUid" style="font-size: 22px; font-family: monospace;">–</div>
+      <div class="hint">tvoje vlastní cookie identita; každý uživatel má svou</div>
     </div>
   </div>
 
@@ -89,12 +101,13 @@
 
   <div class="stat-card">
     <h3>Jak to funguje</h3>
-    <p class="hint" style="margin:0 0 6px;">Návštěvy jsou logované přes veřejnou bezsignupovou službu <code>abacus.jasoncameron.dev</code> – pouze inkrementální čítače, žádné IP, cookies ani analytics.</p>
-    <p class="hint" style="margin:0;">Pokud čísla nepřibývají, služba může být momentálně mimo provoz – kvíz funguje dál bez závislosti na ní.</p>
+    <p class="hint" style="margin:0 0 6px;">Návštěvy a tréninky jsou logované přes veřejnou bezsignupovou službu <code>abacus.jasoncameron.dev</code> – jen inkrementální čítače, žádné IP ani analytics.</p>
+    <p class="hint" style="margin:0 0 6px;"><strong>Per uživatel:</strong> každý prohlížeč dostane v cookie unikátní ID (např. <code id="cookieDemo">…</code>). Pokud cookie smaže, dostane nové – počítá se jako další unikátní návštěvník. Inkognito okno = nový návštěvník vždy.</p>
+    <p class="hint" style="margin:0;"><strong>Detailní per-user feed</strong> (kdo přesně udělal co a kdy) bez vlastního serveru nejde – pokud chceš, můžu doplnit posílání eventů na Discord/Telegram webhook, kde uvidíš živý feed.</p>
   </div>
 </main>
 
-<script src="data.js?v=7"></script>
-<script src="stats.js?v=7"></script>
+<script src="data.js?v=10"></script>
+<script src="stats.js?v=10"></script>
 </body>
 </html>

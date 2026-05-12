@@ -33,12 +33,40 @@ function setVisits(n) {
   if (el && n != null) el.textContent = n;
 }
 
-// 1 hit za session prohlížeče (refresh nenafukuje); reload načte aktuální stav
-if (!sessionStorage.getItem('emm-visit-counted')) {
-  bump('visits', v => { setVisits(v); sessionStorage.setItem('emm-visit-count', String(v)); });
-  sessionStorage.setItem('emm-visit-counted', '1');
+// ─── Cookie helpery ─────────────────────────────────────────
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()[\]\\/+^]/g,'\\$&') + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : null;
+}
+function setCookie(name, value, days) {
+  const exp = new Date(Date.now() + days * 86400000).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${exp}; path=/; SameSite=Lax`;
+}
+function newUid() {
+  // jednoduchý unikátní ID (kratší než UUID, čitelnější)
+  const r = (n) => Math.random().toString(36).slice(2, 2 + n);
+  return r(4) + '-' + r(4) + '-' + r(4);
+}
+
+// Identita návštěvníka (cookie platí 365 dní)
+let visitorId = getCookie('emm-visitor');
+const isFirstVisit = !visitorId;
+if (isFirstVisit) {
+  visitorId = newUid();
+  setCookie('emm-visitor', visitorId, 365);
+}
+window.EMM_VISITOR_ID = visitorId;
+
+// 2 čítače: unikátní návštěvníci × všechny návštěvy stránky
+if (isFirstVisit) {
+  // nový návštěvník → +1 unikátní + +1 pageview
+  bump('visits', v => setVisits(v));
+  bump('pageviews');
+  bump('user-' + visitorId); // 1× na uživatele = známka, že existuje
 } else {
-  // session už počítaná – načti čerstvou hodnotu jen pro zobrazení
+  // známý návštěvník → +1 jen pageview
+  bump('pageviews');
+  bump('user-' + visitorId); // počet návštěv tohoto uživatele
   readCounter('visits', setVisits);
 }
 
