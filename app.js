@@ -190,17 +190,20 @@ function pickChoice(chosenIdx, btn) {
   // sestav vysvětlení do spodní bubliny
   const correctText = item.choices[item.correct];
   const chosenText = item.choices[chosenIdx];
+  const simple = (typeof SIMPLE !== 'undefined' && SIMPLE[topic.id]) ? SIMPLE[topic.id][idx] : null;
   const parts = [];
   if (isRight) {
     parts.push(`<div class="ans-head ans-good">✓ Správně!</div>`);
     parts.push(`<div class="ans-section"><span class="lbl">Správná odpověď</span><div class="ans-pill ans-pill-right">${escapeHtml(correctText)}</div></div>`);
-    parts.push(`<div class="ans-section"><span class="lbl">Proč to tak je</span><div class="ans-detail">${escapeHtml(item.a)}</div></div>`);
   } else {
     parts.push(`<div class="ans-head ans-bad">✗ Špatně</div>`);
     parts.push(`<div class="ans-section"><span class="lbl">Tvoje odpověď</span><div class="ans-pill ans-pill-wrong">${escapeHtml(chosenText)}</div></div>`);
     parts.push(`<div class="ans-section"><span class="lbl">Správně mělo být</span><div class="ans-pill ans-pill-right">${escapeHtml(correctText)}</div></div>`);
-    parts.push(`<div class="ans-section"><span class="lbl">Proč</span><div class="ans-detail">${escapeHtml(item.a)}</div></div>`);
   }
+  if (simple) {
+    parts.push(`<div class="ans-section"><span class="lbl">Jednoduše (pro začátečníky)</span><div class="ans-simple">${escapeHtml(simple)}</div></div>`);
+  }
+  parts.push(`<div class="ans-section"><span class="lbl">Detailní vysvětlení</span><div class="ans-detail">${escapeHtml(item.a)}</div></div>`);
   $('cardA').innerHTML = parts.join('');
 
   const s = state.topics[topic.id];

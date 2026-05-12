@@ -179,6 +179,12 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); fo
 }
 .ans-pill-right { background: #e6f7d8; border-color: var(--green); color: #1f4e00; }
 .ans-pill-wrong { background: #ffe1e1; border-color: var(--red); color: #6a0e0e; }
+.ans-simple {
+  padding: 12px 14px; border-radius: 10px;
+  background: #fff8e1; border: 1px solid #ffe082;
+  color: #4a3000; font-size: 15px; line-height: 1.5;
+  font-weight: 600;
+}
 .ans-detail {
   white-space: pre-wrap; font-size: 14.5px; line-height: 1.55;
   color: #2a2d36;
