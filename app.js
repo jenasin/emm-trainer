@@ -168,10 +168,22 @@ function startSession(topic) {
   renderCard();
 }
 
+function activeChoices(topic, idx, item) {
+  // Pokud má STUDY_GUIDE pro tuto otázku vlastní choices, použij je; jinak fallback
+  const sg = (typeof STUDY_GUIDE !== 'undefined' && STUDY_GUIDE[topic.id]) ? STUDY_GUIDE[topic.id][idx] : null;
+  if (sg && Array.isArray(sg.choices) && sg.choices.length === 3 && typeof sg.correct === 'number') {
+    return { choices: sg.choices, correct: sg.correct };
+  }
+  return { choices: item.choices, correct: item.correct };
+}
+
 function renderCard() {
   const { topic, queue, pos, total } = session;
   const idx = queue[pos];
   const item = topic.questions[idx];
+  const ac = activeChoices(topic, idx, item);
+  session.activeChoices = ac.choices;
+  session.activeCorrect = ac.correct;
 
   // promíchat pořadí 3 možností
   const order = [0,1,2].sort(() => Math.random() - 0.5);
@@ -190,10 +202,10 @@ function renderCard() {
 
   const choicesEl = $('choices');
   choicesEl.innerHTML = '';
-  order.forEach((origIdx, displayPos) => {
+  order.forEach((origIdx) => {
     const btn = document.createElement('button');
     btn.className = 'choice';
-    btn.textContent = item.choices[origIdx];
+    btn.textContent = ac.choices[origIdx];
     btn.dataset.idx = origIdx;
     btn.addEventListener('click', () => pickChoice(origIdx, btn));
     choicesEl.appendChild(btn);
@@ -213,21 +225,23 @@ function pickChoice(chosenIdx, btn) {
   const { topic, queue, pos } = session;
   const idx = queue[pos];
   const item = topic.questions[idx];
-  const isRight = chosenIdx === item.correct;
+  const activeCh = session.activeChoices || item.choices;
+  const activeCorrect = (typeof session.activeCorrect === 'number') ? session.activeCorrect : item.correct;
+  const isRight = chosenIdx === activeCorrect;
 
   // označit tlačítka
   const buttons = document.querySelectorAll('.choice');
   buttons.forEach(b => {
     const i = +b.dataset.idx;
     b.disabled = true;
-    if (i === item.correct) b.classList.add('right');
+    if (i === activeCorrect) b.classList.add('right');
     else if (b === btn) b.classList.add('wrong');
     else b.classList.add('dim');
   });
 
   // sestav vysvětlení do spodní bubliny
-  const correctText = item.choices[item.correct];
-  const chosenText = item.choices[chosenIdx];
+  const correctText = activeCh[activeCorrect];
+  const chosenText = activeCh[chosenIdx];
   const simple = (typeof SIMPLE !== 'undefined' && SIMPLE[topic.id]) ? SIMPLE[topic.id][idx] : null;
   const parts = [];
   if (isRight) {
@@ -241,7 +255,8 @@ function pickChoice(chosenIdx, btn) {
   if (simple) {
     parts.push(`<div class="ans-section"><span class="lbl">Jednoduše (pro začátečníky)</span><div class="ans-simple">${escapeHtml(simple)}</div></div>`);
   }
-  const detailText = (typeof STUDY_GUIDE !== 'undefined' && STUDY_GUIDE[topic.id] && STUDY_GUIDE[topic.id][idx]) || item.a;
+  const sg = (typeof STUDY_GUIDE !== 'undefined' && STUDY_GUIDE[topic.id]) ? STUDY_GUIDE[topic.id][idx] : null;
+  const detailText = (sg && typeof sg === 'object' && sg.detail) ? sg.detail : (typeof sg === 'string' ? sg : item.a);
   parts.push(`<div class="ans-section"><span class="lbl">Detailní vysvětlení</span><div class="ans-detail">${escapeHtml(detailText)}</div></div>`);
   $('cardA').innerHTML = parts.join('');
 
