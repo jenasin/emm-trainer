@@ -81,6 +81,48 @@ b) Prostor požadavků: zobrazují se sloupcové vektory matice A a vektor b, hl
 2) Alternativní optima – vrstevnice ÚF je rovnoběžná s některou stranou přípustné oblasti (nekonečně mnoho řešení).
 3) Neomezené řešení – přípustná oblast je otevřená ve směru zlepšování ÚF.
 4) Neexistuje přípustné řešení – průnik polorovin je prázdný (rozporná omezení).`
+      },
+      {
+        q: 'Co je účelová funkce v LP modelu a jakou má podobu?',
+        choices: [
+          'Lineární funkce z = Σc_j·x_j, která se minimalizuje nebo maximalizuje; vyjadřuje optimalizační kritérium.',
+          'Nelineární funkce součinu proměnných; vyjadřuje stochastické kritérium úlohy.',
+          'Soustava omezujících podmínek; minimalizuje se simplexovým algoritmem.'
+        ],
+        correct: 0,
+        a: `Účelová funkce z = Σ c_j·x_j → min / max je kritérium, podle kterého optimalizujeme.
+• Je lineární v rozhodovacích proměnných x_j s pevnými cenovými koeficienty c_j.
+• Vyjadřuje ekonomický cíl: max zisku, min nákladů, max produkce, min odpadu atd.
+• Vrstevnice ÚF jsou rovnoběžné nadroviny; v simplexu posouváme tuto vrstevnici přes vrcholy mnohostěnu.`
+      },
+      {
+        q: 'Co je konvexní množina a proč je důležitá v LP?',
+        choices: [
+          'Množina, kde úsečka mezi libovolnými dvěma body leží celá uvnitř. Přípustná množina LP je konvexní – stačí prohledávat vrcholy.',
+          'Množina s pravoúhlým ohraničením; pro LP není podstatná.',
+          'Množina náhodných bodů; v LP slouží jen ke kontrole rozdělení proměnných.'
+        ],
+        correct: 0,
+        a: `Konvexní množina = pro libovolné dva body x, y z množiny leží celá úsečka λx + (1−λ)y, λ∈[0,1] uvnitř.
+Význam pro LP:
+• Průnik konečně mnoha polorovin (přípustná množina LP) je vždy konvexní.
+• Lineární funkce nad konvexní množinou dosahuje extrému ve vrcholu.
+• Lokální optimum = globální optimum.
+• Stačí prohledávat konečnou množinu vrcholů → základ simplexu.`
+      },
+      {
+        q: 'Uveďte obecný matematický zápis modelu lineárního programování.',
+        choices: [
+          'min/max z = c^T·x   za podmínek   A·x ≤/=/≥ b,   x ≥ 0.',
+          'min z = A·x   za podmínek   c·x = 1, b libovolné.',
+          'min z = Σ x_j²   za podmínek   Σ a_ij·x_j = b_i.'
+        ],
+        correct: 0,
+        a: `Obecný zápis LP modelu:
+   min nebo max  z = c^T · x = Σ_j c_j · x_j
+   za podmínek:    Σ_j a_ij · x_j  {≤, =, ≥}  b_i,   i = 1..m
+                    x_j ≥ 0   (případně volné)
+Komponenty: vektor proměnných x ∈ R^n, vektor cen c, matice koeficientů A (m×n), vektor pravých stran b.`
       }
     ]
   },
@@ -180,6 +222,47 @@ Důsledek: stačí prohledat konečnou množinu vrcholů – přesně to dělá 
         correct: 0,
         a: `Přípustnost: b musí být vyjádřitelné jako nezáporná lineární kombinace m sloupců matice A → b leží v kuželu generovaném těmito sloupci.
 Optimum: ze všech bázových kuželů, do kterých b spadá, vybereme ten s nejlepší hodnotou ÚF (pro min nejmenší vážený součet cen sloupců). Graficky: kreslíme aktivity a hledáme bázi obsahující b s extrémní ÚF.`
+      },
+      {
+        q: 'Co je vrchol (extrémní bod) konvexního mnohostěnu?',
+        choices: [
+          'Bod, který nelze vyjádřit jako konvexní kombinaci dvou různých bodů mnohostěnu; odpovídá bázickému přípustnému řešení.',
+          'Libovolný vnitřní bod přípustné množiny.',
+          'Geometrický střed mnohostěnu, vždy průměr všech vrcholů.'
+        ],
+        correct: 0,
+        a: `Extrémní bod (vrchol) mnohostěnu = bod x, který nelze zapsat jako x = λu + (1−λ)v pro λ ∈ (0,1) a dva různé body u, v z mnohostěnu.
+Význam:
+• Každé bázické přípustné řešení LP odpovídá vrcholu přípustného mnohostěnu (a naopak).
+• Optimum lineární ÚF nad mnohostěnem se vždy nachází alespoň v jednom vrcholu.
+• Počet vrcholů je konečný → simplex prohledává konečnou množinu.`
+      },
+      {
+        q: 'Kolik nejvýše bázických řešení může mít LP s n proměnnými a m omezeními (rovnicemi)?',
+        choices: [
+          'Maximálně C(n,m) = n! / (m!·(n−m)!) – ne všechna ale musí být přípustná.',
+          'Vždy přesně n + m bázických řešení.',
+          'Vždy přesně m · n bázických řešení.'
+        ],
+        correct: 0,
+        a: `V kanonickém tvaru s n proměnnými a m rovnicemi tvoří bázi libovolných m sloupců matice A, které jsou lineárně nezávislé.
+• Maximální počet bázických řešení = počet kombinací výběru m sloupců z n: C(n,m) = n! / (m!·(n−m)!).
+• Ne všechna jsou přípustná (mohou porušit nezápornost) a ne všechna různá (degenerace).
+• Simplex prohledává jen přípustná v cíleném pořadí, takže nemusí projít všechna.`
+      },
+      {
+        q: 'Co je konvexní kombinace bodů a jaký má význam v LP?',
+        choices: [
+          'Vyjádření bodu jako Σλ_i·x_i, kde λ_i ≥ 0 a Σλ_i = 1. Každý bod přípustné množiny LP je konvexní kombinací jejích vrcholů.',
+          'Náhodné rozdělení bodů v prostoru s pravděpodobností ≥ 0.',
+          'Aritmetický průměr libovolných dvou bodů; nesouvisí s LP.'
+        ],
+        correct: 0,
+        a: `Konvexní kombinace bodů x_1,…,x_k = bod ve tvaru x = Σλ_i·x_i, kde λ_i ≥ 0 a Σλ_i = 1.
+Význam pro LP:
+• Každý bod konvexního mnohostěnu lze vyjádřit jako konvexní kombinaci jeho vrcholů (Krein-Milmanova věta).
+• Alternativní optimum tvoří konvexní kombinaci optimálních vrcholů.
+• Geometrická intuice pro důkaz, proč optimum LP vždy leží ve vrcholu.`
       }
     ]
   },
@@ -290,6 +373,49 @@ Pro minimalizaci platí opačná podmínka.`
         a: `Účel: po výběru vstupující proměnné určit, která bázická opustí bázi tak, aby řešení zůstalo nezáporné.
 Princip: poměrové pravidlo – pro řádky s a_ik > 0 spočítáme b̄_i/a_ik a vybereme min. Odpovídající řádek určuje vystupující bázickou.
 Pokud jsou všechna a_ik ≤ 0 ⇒ úloha má neomezené řešení.`
+      },
+      {
+        q: 'Co je dvoufázová simplexová metoda?',
+        choices: [
+          '1. fáze: minimalizujeme součet umělých proměnných (cíl 0) → najdeme přípustnou bázi. 2. fáze: optimalizujeme původní ÚF.',
+          'První fáze řeší primár, druhá duál – obě se musí shodovat na stejné hodnotě.',
+          'Zdvojnásobuje počet iterací simplexu pro vyšší numerickou přesnost.'
+        ],
+        correct: 0,
+        a: `Dvoufázový simplex se používá, když výchozí báze obsahuje umělé proměnné.
+1) Fáze 1: ÚF = Σ a_i (součet umělých proměnných) → min. Cíl: dostat všechny umělé proměnné na 0 → přípustné bázické řešení původního modelu.
+   - Skončí-li fáze 1 s ÚF > 0, je úloha nepřípustná.
+2) Fáze 2: vyhodíme umělé proměnné a optimalizujeme původní ÚF od přípustné báze získané v 1. fázi.
+Alternativa: metoda Big-M (jednofázová, ale numericky citlivá).`
+      },
+      {
+        q: 'Co je Big-M metoda?',
+        choices: [
+          'Umělé proměnné dostanou v ÚF velký penalizační koeficient ±M, čímž jsou v optimu vytlačeny z báze.',
+          'Násobí všechny pravé strany velkou konstantou M pro lepší numerickou stabilitu.',
+          'Zvětšuje matici A o M dalších sloupců s nulami.'
+        ],
+        correct: 0,
+        a: `Big-M metoda – jednofázový přístup k modelům s umělými proměnnými.
+Princip: každá umělá proměnná a_i dostane v ÚF velmi velký koeficient:
+• pro min: +M (penalizujeme jejich kladnou hodnotu),
+• pro max: −M.
+Simplex je „nucen" vytlačit umělé proměnné z báze (na hodnotu 0). Pokud po optimalizaci umělá proměnná stále zůstane v bázi s kladnou hodnotou ⇒ úloha nepřípustná.
+Nevýhoda: numerická citlivost (volba M).`
+      },
+      {
+        q: 'Co je cyklení v simplexu a jak mu lze předejít?',
+        choices: [
+          'Opakované návraty k téže degenerované tabulce bez zlepšení ÚF; brání mu Blandovo pravidlo (proměnná s nejmenším indexem).',
+          'Nekonečné zlepšování ÚF; pomůže ukončit po n iteracích.',
+          'Jev výskytu pouze u nelineárních modelů; v LP nehrozí.'
+        ],
+        correct: 0,
+        a: `Cyklení: u degenerovaných tabulek se může stát, že po několika iteracích simplex vrátí k téže bázi bez zlepšení ÚF (nekonečně se zacyklí).
+Prevence:
+• Blandovo pravidlo – při výběru vstupující i vystupující proměnné volíme tu s nejmenším indexem; cyklení je vyloučeno.
+• Lexikografická perturbace.
+V praxi je cyklení velmi vzácné; většina implementací používá Blandovo pravidlo jako pojistku.`
       }
     ]
   },
@@ -381,6 +507,45 @@ Duál (min, ≥): Σa_ij·y_i ≥ c_j, y_i ≥ 0, min Σb_i·y_i.
         correct: 0,
         a: `Základní věta o dualitě: pokud má primární úloha optimální řešení, má i duální úloha optimální řešení a hodnoty jejich účelových funkcí jsou stejné: z*_P = z*_D.
 Důsledky: slabá dualita (c·x ≤ b·y pro přípustná x, y), optimalita ↔ rovnost ÚF + komplementární uvolnění. Poskytuje silnou kontrolu optimality, ekonomickou interpretaci a důkaz konečnosti simplexu.`
+      },
+      {
+        q: 'Co říká věta o komplementárním uvolnění (slackness)?',
+        choices: [
+          'V optimu platí: x_j > 0 ⇒ příslušné duální omezení v rovnosti; y_i > 0 ⇒ primární omezení v rovnosti.',
+          'Primární a duální optimum jsou opačná čísla.',
+          'Všechny duální proměnné y_i musí být v optimu nulové.'
+        ],
+        correct: 0,
+        a: `Věta o komplementárním uvolnění (Complementary Slackness):
+Pro optimální x*, y* primárně-duálního páru platí pro každou dvojici:
+• x*_j · (c_j − a^j · y*) = 0  → pokud x_j > 0, příslušné duální omezení je v rovnosti.
+• y*_i · (b_i − a_i · x*) = 0  → pokud y_i > 0, příslušné primární omezení je aktivní.
+Interpretace: nenulové proměnné odpovídají aktivním omezením v sdružené úloze. Slouží ke kontrole optimality bez explicitního výpočtu obou úloh.`
+      },
+      {
+        q: 'Jaký je rozdíl mezi slabou a silnou větou o dualitě?',
+        choices: [
+          'Slabá: pro libovolná přípustná x, y platí c·x ≤ b·y (max). Silná: existují-li optima, platí rovnost z*_P = z*_D.',
+          'Slabá platí pro min, silná pro max úlohy.',
+          'Slabá je jen pro celočíselné LP, silná pro spojité.'
+        ],
+        correct: 0,
+        a: `Slabá věta o dualitě: pro libovolná přípustná řešení x (primár, max) a y (duál, min) platí c·x ≤ b·y. Hodnoty primáru vždy zdola ohraničují duál a naopak.
+Silná věta o dualitě: má-li primár optimum, má i duál a optimální hodnoty se rovnají: z*_P = z*_D.
+Důsledky: slabá dualita slouží k odhadu mezí (např. v B&B), silná k důkazu optimality a postoptimalizaci.`
+      },
+      {
+        q: 'Jak interpretovat duální proměnnou y_i v úloze o výrobním programu?',
+        choices: [
+          'Stínová cena i-tého zdroje – maximální cena, kterou byste zaplatili za další jednotku tohoto zdroje.',
+          'Celkový zisk z výroby produktu i.',
+          'Počet jednotek výrobku i v optimálním řešení.'
+        ],
+        correct: 0,
+        a: `Duální proměnná y_i odpovídá i-tému omezení (zdroji) a vyjadřuje stínovou cenu:
+• Kolik se změní optimální hodnota ÚF, pokud se kapacita zdroje zvýší o jednotku.
+• Maximální cena, kterou je výhodné zaplatit za další jednotku zdroje.
+Příklad: u zdroje s y_i = 50 Kč/h každá další hodina kapacity zvýší zisk o 50 Kč (v intervalu stability báze). Pro plně využitý zdroj y_i > 0, pro nevyužitý y_i = 0.`
       }
     ]
   },
@@ -477,6 +642,47 @@ Směšovací úloha (dieta, slitiny, krmiva):
 • Cíl min odpad (resp. min počet řezných schémat / polotovarů) při řezání základního formátu na požadované díly. Proměnné = počet použití každého řezného schématu, omezení = splnit požadavky.
 Plánování směn:
 • Cíl min mzdové náklady / počet pracovníků. Proměnné = počet pracovníků nastupujících v daném časovém slotu, omezení = pokrýt poptávku po pracovní síle v každé hodině.`
+      },
+      {
+        q: 'Jak postupujeme při přidání nové omezující podmínky po optimalizaci?',
+        choices: [
+          'Otestujeme stávající optimum. Pokud podmínku splňuje, řešení platí. Jinak ji přidáme do tabulky a reoptimalizujeme duálním simplexem.',
+          'Zahájíme simplex od začátku, předchozí výsledky zahodíme.',
+          'Novou podmínku ignorujeme – LP je citlivé jen na změnu ÚF.'
+        ],
+        correct: 0,
+        a: `Postup:
+1) Dosadíme optimální řešení x* do nové podmínky.
+2) Pokud x* splňuje → optimum zůstává.
+3) Pokud nesplňuje → přidáme řádek do simplexové tabulky (s vlastní přídatnou nebo umělou proměnnou), spočítáme jeho vyjádření v aktuální bázi a aplikujeme duální simplex.
+Duální simplex odstraní nepřípustnost při zachování příznivých redukovaných cen.`
+      },
+      {
+        q: 'Co je celočíselné programování (IP) a jaký má vztah k LP?',
+        choices: [
+          'Varianta LP s celočíselnými (nebo binárními) proměnnými. Řeší se metodou větvení a omezení (B&B); aplikace: lokace skladů, výběr projektů.',
+          'LP a IP jsou totožné, IP je jen formální označení.',
+          'IP řeší pouze maximalizační úlohy s reálnými proměnnými.'
+        ],
+        correct: 0,
+        a: `Celočíselné programování (IP – Integer Programming): LP s dodatečnou podmínkou, že některé / všechny proměnné musí být celočíselné. Speciální případ – 0-1 IP (binární).
+Vztah k LP:
+• LP relaxace IP poskytuje horní / dolní mez optima.
+• IP je obecně NP-těžké, nelze řešit přímo simplexem.
+• Klasické algoritmy: Branch & Bound, Cutting Planes, Branch & Cut.
+Aplikace: výběr investičních projektů, lokace skladů, plánování posádky, řezné plány s celočíselnými počty.`
+      },
+      {
+        q: 'Jak změna technologického koeficientu a_ij ovlivní optimální řešení?',
+        choices: [
+          'Pro nebázickou proměnnou stačí přepočítat c̄_j; pro bázickou: změna ovlivní inverzní bázi, zpravidla nutná reoptimalizace.',
+          'Žádný vliv – technologické koeficienty se po optimalizaci nemění.',
+          'Vždy vyžaduje úplné nové sestavení modelu od začátku.'
+        ],
+        correct: 0,
+        a: `Změna a_ij ovlivní jeden sloupec matice A.
+• Sloupec nebázické proměnné: stačí přepočítat ā_j = B⁻¹·a_j a novou redukovanou cenu c̄_j. Pokud zůstane nepříznivá → optimum platí; jinak provedeme simplexovou iteraci.
+• Sloupec bázické proměnné: změna ovlivní samotnou matici B, tedy i B⁻¹ a všechny sloupce v tabulce. Zpravidla je nutná reoptimalizace (přepočet inverze, kontrola přípustnosti i optimality).`
       }
     ]
   },
@@ -561,6 +767,46 @@ Kvalita: nejlepší ze tří metod – často přímo optimum nebo velmi blízko
 Vznik: během konstrukce výchozího řešení se naráz vyčerpá řádek i sloupec (a_i = b_j v dané buňce).
 Určení: spočítáme obsazená pole.
 Odstranění: do vhodné neobsazené buňky vložíme „nulovou dodávku" (ε ≈ 0) tak, aby vznikla úplná báze (m+n−1 polí) a aby nevzniknul cyklus s obsazenými poli.`
+      },
+      {
+        q: 'Kolik obsazených (bázických) polí má řešení vyvážené dopravní úlohy?',
+        choices: [
+          'Přesně m + n − 1. Pokud méně, řešení je degenerované.',
+          'Vždy m · n – každé pole tabulky musí být obsazené.',
+          'Závisí na sazbách c_ij a nelze obecně určit.'
+        ],
+        correct: 0,
+        a: `Vyvážená dopravní úloha o m dodavatelích a n spotřebitelích má m + n bilančních rovnic, ale jsou lineárně závislé (Σa_i = Σb_j), takže nezávislých je m + n − 1.
+Důsledek: bázické přípustné řešení má právě m + n − 1 obsazených (bázických) polí, ostatní jsou 0.
+• Méně obsazených → degenerace (řešíme ε-dodávkou).
+• Více obsazených → není to bázické řešení.`
+      },
+      {
+        q: 'Proč musí být dopravní úloha vyvážená?',
+        choices: [
+          'Aby bilance měly rovnicový tvar (Σa_i = Σb_j) – podmínka pro řešení dopravním algoritmem.',
+          'Aby všechny sazby c_ij byly stejné.',
+          'Není to nutné, nevyvážený model lze řešit přímo.'
+        ],
+        correct: 0,
+        a: `Vyváženost Σa_i = Σb_j je nezbytná:
+• Bilance Σ_j x_ij = a_i a Σ_i x_ij = b_j musí být současně splnitelné.
+• Dopravní algoritmus (MODI, stepping-stone) předpokládá rovnicový tvar.
+• Při nerovnováze přidáme fiktivního dodavatele nebo spotřebitele s nulovými sazbami – tím se model vyváží bez ovlivnění optimálních toků mezi reálnými uzly.`
+      },
+      {
+        q: 'Jaký je vztah dopravní úlohy a obecného LP?',
+        choices: [
+          'DÚ je speciální LP s rovnicovými bilancemi a 0/1 koeficienty (totální unimodularita) – řešení je při celočíselných a, b automaticky celočíselné.',
+          'DÚ je nelineární úloha a nelze ji řešit metodami LP.',
+          'DÚ a LP nemají žádný společný matematický základ.'
+        ],
+        correct: 0,
+        a: `Dopravní úloha je speciální případ LP s velmi specifickou strukturou matice A:
+• Každá proměnná x_ij má v matici jen dvě jedničky – v řádku dodavatele i a v řádku spotřebitele j.
+• Totální unimodularita ⇒ při celočíselných a_i, b_j je optimum automaticky celočíselné.
+• Lze řešit plným simplexem, ale efektivnější je dopravní algoritmus (MODI) využívající tabulkovou strukturu.
+• MODI je v podstatě simplex aplikovaný na tuto speciální reprezentaci.`
       }
     ]
   },
@@ -619,6 +865,51 @@ Analýza: spočítáme δ_ij metodou MODI pro neobsazené buňky.
         correct: 0,
         a: `Propustnost = maximální množství, které lze danou trasou (i,j) převést, aniž bychom porušili kapacity a požadavky a opustili optimální bázi.
 Analýza: pro neobsazenou perspektivní trasu sestavíme Danzigův obvod a určíme maximální θ = min hodnot ve vrcholech se znaménkem „−". To je propustnost dané trasy v rámci stávajícího řešení.`
+      },
+      {
+        q: 'Co znamená, když jsou všechna δ_ij ≥ 0 v MODI (pro minimalizaci)?',
+        choices: [
+          'Aktuální řešení je optimální; δ_ij = 0 značí alternativní optimum.',
+          'Úloha je nepřípustná; výpočet musíme ukončit.',
+          'Je třeba pokračovat v iteracích donekonečna.'
+        ],
+        correct: 0,
+        a: `δ_ij = c_ij − (u_i + v_j) je redukovaná cena neobsazené trasy.
+• Všechna δ_ij ≥ 0 (pro min) → optimum, žádná neobsazená trasa nezlepší ÚF.
+• δ_ij = 0 → alternativní optimum (zařazením trasy se ÚF nezmění).
+• Existuje δ_ij < 0 → zlepšení možné zařazením této trasy přes Danzigův obvod.
+Pro max je orientace opačná (hledáme všechna δ_ij ≤ 0).`
+      },
+      {
+        q: 'Co je stepping-stone metoda v dopravní úloze?',
+        choices: [
+          'Testuje optimalitu přímo přes Danzigovy obvody – pro každou neobsazenou buňku spočítá změnu nákladů.',
+          'Heuristika pro výchozí řešení, ekvivalent severozápadního rohu.',
+          'Analýza citlivosti pravých stran, ekvivalent MODI.'
+        ],
+        correct: 0,
+        a: `Stepping-stone metoda testuje optimalitu dopravní úlohy přímo přes Danzigovy obvody.
+Postup pro každou neobsazenou buňku (i,j):
+1) Najdeme uzavřený obvod obsazených polí.
+2) Spočítáme změnu nákladů Δ_ij střídavým + a − koeficienty c po obvodu.
+3) Pokud všechna Δ_ij ≥ 0 (pro min) → optimum; jinak vybereme nejvýhodnější buňku a zařadíme ji do báze.
+Funkčně ekvivalentní MODI; MODI je výpočetně rychlejší (nemusíme stavět obvod pro každou buňku).`
+      },
+      {
+        q: 'Jaký je obecný postup řešení jednostupňové dopravní úlohy?',
+        choices: [
+          '1) Vyvážení. 2) Výchozí řešení (SZ roh / index / VAM). 3) MODI test optimality. 4) Při neoptimu Danzigův obvod a výměna báze. 5) Opakovat.',
+          '1) Aplikovat simplex. 2) Spočítat duál. 3) Porovnat oba.',
+          '1) Náhodné rozložení. 2) Iterativní vyhlazování bez kontroly optimality.'
+        ],
+        correct: 0,
+        a: `Klasický postup:
+1) Vyvážení úlohy (Σa = Σb; doplnit fiktivního dodavatele/spotřebitele).
+2) Konstrukce výchozího bázického přípustného řešení (severozápadní roh, indexová metoda, VAM).
+3) Kontrola počtu obsazených polí (m+n−1; doplnění ε při degeneraci).
+4) Test optimality MODI (výpočet u_i, v_j, δ_ij).
+5) Je-li optimum → konec. Jinak nejzápornější δ_ij → Danzigův obvod → přepočet hodnot.
+6) Opakovat kroky 4–5 do dosažení optima.`
       }
     ]
   },
@@ -727,6 +1018,54 @@ Kvalita: dobrá heuristika, lepší než nejbližší soused.`
 2) Pro každý nenavštívený uzel k najdeme pozici vložení mezi dva sousední i, j v aktuální trase tak, aby přírůstek d_ik + d_kj − d_ij byl minimální.
 3) Uzel vložíme a opakujeme, dokud nejsou všechny uzly v trase.
 Kvalita: lepší než nejbližší soused, zpravidla dobrá.`
+      },
+      {
+        q: 'Jaký je rozdíl mezi přiřazovací a obecnou dopravní úlohou?',
+        choices: [
+          'Přiřazovací je speciální dopravní s m = n, a_i = b_j = 1 a binárními x_ij; jeden zdroj se přiřadí přesně jednomu cíli.',
+          'Přiřazovací úloha má spojité proměnné a libovolné kapacity.',
+          'V přiřazovací úloze se neminimalizují náklady, ale počet kroků.'
+        ],
+        correct: 0,
+        a: `Přiřazovací úloha je speciální dopravní úloha s těmito zjednodušeními:
+• m = n (stejně zdrojů jako cílů).
+• Všechny kapacity i požadavky = 1.
+• Proměnné x_ij ∈ {0, 1} (binární přiřazení 1:1).
+Důsledky:
+• Řešení je permutace zdrojů na cíle.
+• Optimum je vždy celočíselné (totální unimodularita).
+• Efektivnější než obecná DÚ je maďarská metoda – O(n³).`
+      },
+      {
+        q: 'Co je metoda Branch and Bound (větvení a omezení) pro TSP?',
+        choices: [
+          'Exaktní metoda: dělí úlohu na podúlohy, pro každou počítá dolní mez, prořezává podúlohy s horší mezí než dosud nejlepší řešení.',
+          'Heuristika pro rychlé suboptimální řešení s nepřesnými mezemi.',
+          'Stejná jako maďarská metoda; používá se jen pro přiřazovací úlohu.'
+        ],
+        correct: 0,
+        a: `Branch and Bound (B&B) – exaktní metoda pro NP-těžké úlohy včetně TSP.
+Princip:
+1) Větvení: úlohu rozdělíme na disjunktní podúlohy (např. „obsahuje hranu (i,j)" vs „neobsahuje").
+2) Omezení: pro každou podúlohu spočítáme dolní mez ÚF (LP relaxace nebo přiřazovací úloha).
+3) Prořezávání: pokud dolní mez ≥ dosud nejlepší známé řešení → podúlohu zahodíme.
+4) Pokračujeme rekurzivně, dokud neproberme všechny větve.
+Výsledek: garantované optimum, v nejhorším exponenciální čas.`
+      },
+      {
+        q: 'Uveďte typickou praktickou aplikaci okružního dopravního problému.',
+        choices: [
+          'Plánování rozvozových tras (kurýrní služby, zásobování), trasa servisního technika, vrtání desek plošných spojů.',
+          'Řešení směšovacích úloh ve farmacii.',
+          'Plánování směn v call centru.'
+        ],
+        correct: 0,
+        a: `Praktické aplikace TSP a variant:
+• Logistika: rozvoz zboží, sběr odpadu, doručování (kurýři).
+• Servisní výjezdy: technici navštěvující více klientů během dne.
+• Výroba: cesta robota po desce plošných spojů, CNC obrábění více otvorů.
+• Genetika: sekvenování DNA.
+• VRP (Vehicle Routing) navíc zohledňuje kapacity vozidel a poptávky uzlů – nejbližší k reálné logistice.`
       }
     ]
   },
@@ -832,6 +1171,49 @@ Ford-Fulkersonova metoda:
 3) Najdi minimální reziduální kapacitu po cestě a o tuto hodnotu zvyš tok.
 4) Opakuj, dokud existuje zlepšující cesta.
 Výsledek odpovídá min řezu (teorém max-flow / min-cut).`
+      },
+      {
+        q: 'Co je strom v teorii grafů?',
+        choices: [
+          'Souvislý graf bez cyklů; má n−1 hran (pro n uzlů); mezi každými dvěma uzly existuje právě jedna cesta.',
+          'Graf s cykly a izolovanými uzly bez společných hran.',
+          'Strom má vždy n hran a n+1 uzlů.'
+        ],
+        correct: 0,
+        a: `Strom = souvislý neorientovaný graf bez cyklů.
+Vlastnosti:
+• n uzlů, právě n − 1 hran.
+• Mezi každými dvěma uzly existuje právě jedna cesta.
+• Odebrání libovolné hrany ho rozpadne na 2 komponenty.
+• Přidání libovolné hrany v něm vytvoří cyklus.
+Speciální typy: zakořeněný strom (s vyznačeným kořenem), binární strom, kostra grafu (strom přes všechny uzly grafu, nejmenší kostra je MST).`
+      },
+      {
+        q: 'Co je Eulerův tah a co Hamiltonovský cyklus?',
+        choices: [
+          'Eulerův tah projde každou hranou právě jednou. Hamiltonovský cyklus navštíví každý uzel právě jednou a vrátí se na začátek.',
+          'Oba pojmy jsou synonymní – projdou všechny hrany i uzly.',
+          'Eulerův tah je vždy nejkratší cesta; Hamiltonovský cyklus je vždy nejdelší.'
+        ],
+        correct: 0,
+        a: `• Eulerův tah – tah procházející každou hranou grafu právě jednou. Existuje právě tehdy, má-li graf nejvýše 2 uzly lichého stupně.
+• Eulerův cyklus – uzavřený Eulerův tah; existuje, pokud jsou všechny uzly sudého stupně.
+• Hamiltonovský cyklus – uzavřená kružnice procházející každý uzel právě jednou. Rozhodnutí o jeho existenci je NP-úplné.
+Eulerův problém je polynomiální (snadný), Hamiltonovský je NP-úplný. Klasická TSP úloha hledá optimální Hamiltonovský cyklus.`
+      },
+      {
+        q: 'Co je bipartitní graf?',
+        choices: [
+          'Graf, jehož uzly lze rozdělit do dvou disjunktních množin tak, aby hrany vedly jen mezi nimi. Modeluje přiřazovací úlohu.',
+          'Graf se dvěma stejně velkými klastry uzlů spojených uvnitř každého klastru.',
+          'Graf, který má dvě komponenty souvislosti.'
+        ],
+        correct: 0,
+        a: `Bipartitní graf G = (U ∪ V, E): množinu uzlů lze rozdělit na dvě disjunktní podmnožiny U, V tak, aby každá hrana spojovala uzel z U s uzlem z V (uvnitř U ani V žádné hrany).
+Vlastnosti:
+• Graf je bipartitní ⇔ neobsahuje cyklus liché délky.
+• Modeluje přiřazovací úlohu (jedna strana = pracovníci, druhá = úkoly).
+• Maximální párování v bipartitním grafu se řeší v polynomiálním čase (Hopcroft–Karp, O(E·√V)).`
       }
     ]
   },
@@ -941,6 +1323,54 @@ Rezervy činnosti (i,j) s dobou t_ij:
 • Nezávislá RN = max(0, ZM_j − ZP_i − t_ij) – posun bez ovlivnění ostatních činností v žádném směru.
 • Interferenční RI = RC − RV.
 Kritické činnosti: RC = 0. Rezervy slouží k vyrovnání zdrojů a řízení rizika.`
+      },
+      {
+        q: 'Co je metoda PERT a jaký je rozdíl oproti CPM?',
+        choices: [
+          'PERT je stochastická síťová analýza s pravděpodobnostními dobami (3 odhady). CPM používá pevné deterministické doby.',
+          'PERT je rychlejší verze CPM, ale méně přesná.',
+          'PERT a CPM jsou totožné, liší se jen názvem.'
+        ],
+        correct: 0,
+        a: `PERT (Program Evaluation and Review Technique) je stochastická verze síťové analýzy.
+Rozdíl oproti CPM:
+• CPM: pevné, deterministické doby trvání. Vhodné pro opakované projekty (stavebnictví).
+• PERT: pro každou činnost 3 odhady (optimistický a, nejpravděpodobnější m, pesimistický b); doba je náhodná veličina (typicky β-rozdělení).
+• PERT umožňuje vypočítat pravděpodobnost dokončení projektu k danému termínu.
+Postup časové analýzy je obdobný (forward/backward pass) s očekávanými dobami t_e.`
+      },
+      {
+        q: 'Jaký je vzorec pro očekávanou dobu trvání činnosti v metodě PERT?',
+        choices: [
+          't_e = (a + 4m + b) / 6, kde a = optimistický, m = nejpravděpodobnější, b = pesimistický. Rozptyl σ² = ((b−a)/6)².',
+          't_e = (a + b) / 2, jednoduchý průměr extrémů.',
+          't_e = m · (b − a), součin nejpravděpodobnější doby a rozsahu.'
+        ],
+        correct: 0,
+        a: `V metodě PERT se očekávaná (střední) doba trvání činnosti počítá jako vážený průměr 3 odhadů:
+   t_e = (a + 4m + b) / 6
+   σ² = ((b − a) / 6)²,   σ = (b − a) / 6
+kde a = optimistický, m = nejpravděpodobnější, b = pesimistický odhad.
+Pro celý projekt: očekávaná doba kritické cesty = Σ t_e kritických činností; rozptyl projektu = Σ σ² (předpoklad nezávislosti). Pomocí Centrálního limitního teorému lze odhadnout pravděpodobnost dokončení projektu k danému termínu (normální aproximace).`
+      },
+      {
+        q: 'Co je Ganttův diagram a jakou má roli v projektovém řízení?',
+        choices: [
+          'Sloupcový graf zobrazující činnosti na časové ose s dobou trvání, návaznostmi a překryvy; vizualizace harmonogramu.',
+          'Graf finančních toků projektu v čase.',
+          'Speciální typ síťového grafu pro stochastické projekty.'
+        ],
+        correct: 0,
+        a: `Ganttův diagram = horizontální sloupcový graf:
+• Osa x = časová osa projektu.
+• Osa y = seznam činností.
+• Délka sloupce = doba trvání činnosti.
+• Pozice sloupce = počátek a konec činnosti.
+Funkce:
+• Vizualizace harmonogramu a milníků.
+• Zobrazení rezerv (mezery / přesahy sloupců).
+• Sledování postupu projektu (často plán vs skutečnost ve dvou barvách).
+Doplňuje síťový graf: síť ukazuje logické vazby, Gantt časové rozložení.`
       }
     ]
   }
