@@ -6,17 +6,40 @@ const STORE_KEY = 'emm-trainer-v2';
 const CARDS_PER_LEVEL = 8;
 const HEARTS_PER_LEVEL = 3;
 
-// ─── Anonymní čítače (skryté) ────────────────────────────────
+// ─── Anonymní čítače (visits, sessions, topic-*) ─────────────
 const COUNTER_NS = 'emm-trainer-jenasin';
 const COUNTER_BASE = 'https://abacus.jasoncameron.dev';
-function bump(key) {
-  // bezpečné, nezatěžuje hlavní logiku
-  try { fetch(`${COUNTER_BASE}/hit/${COUNTER_NS}/${key}`, { mode: 'cors' }).catch(() => {}); } catch (e) {}
+
+function bump(key, cb) {
+  try {
+    fetch(`${COUNTER_BASE}/hit/${COUNTER_NS}/${key}`, { mode: 'cors' })
+      .then(r => r.json())
+      .then(d => cb && cb(d.value))
+      .catch(() => {});
+  } catch (e) {}
 }
-// jeden hit za session prohlížeče, aby refresh nenafukoval čísla
+
+function readCounter(key, cb) {
+  try {
+    fetch(`${COUNTER_BASE}/get/${COUNTER_NS}/${key}`, { mode: 'cors' })
+      .then(r => r.json())
+      .then(d => cb(d.value))
+      .catch(() => cb('?'));
+  } catch (e) { cb('?'); }
+}
+
+function setVisits(n) {
+  const el = document.getElementById('visitsVal');
+  if (el && n != null) el.textContent = n;
+}
+
+// 1 hit za session prohlížeče (refresh nenafukuje); reload načte aktuální stav
 if (!sessionStorage.getItem('emm-visit-counted')) {
-  bump('visits');
+  bump('visits', v => { setVisits(v); sessionStorage.setItem('emm-visit-count', String(v)); });
   sessionStorage.setItem('emm-visit-counted', '1');
+} else {
+  // session už počítaná – načti čerstvou hodnotu jen pro zobrazení
+  readCounter('visits', setVisits);
 }
 
 const state = load();
@@ -218,7 +241,8 @@ function pickChoice(chosenIdx, btn) {
   if (simple) {
     parts.push(`<div class="ans-section"><span class="lbl">Jednoduše (pro začátečníky)</span><div class="ans-simple">${escapeHtml(simple)}</div></div>`);
   }
-  parts.push(`<div class="ans-section"><span class="lbl">Detailní vysvětlení</span><div class="ans-detail">${escapeHtml(item.a)}</div></div>`);
+  const detailText = (typeof STUDY_GUIDE !== 'undefined' && STUDY_GUIDE[topic.id] && STUDY_GUIDE[topic.id][idx]) || item.a;
+  parts.push(`<div class="ans-section"><span class="lbl">Detailní vysvětlení</span><div class="ans-detail">${escapeHtml(detailText)}</div></div>`);
   $('cardA').innerHTML = parts.join('');
 
   const s = state.topics[topic.id];
