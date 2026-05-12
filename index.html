@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMM Trenér – příprava ke zkoušce</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">EMM</span>
+    <span class="title">Trenér ke zkoušce</span>
+  </div>
+  <div class="stats">
+    <span class="stat" title="XP – body za úspěšně zodpovězené karty">
+      <span class="ico">XP</span><span id="xpVal">0</span>
+    </span>
+    <span class="stat" title="Aktuální série denních cvičení">
+      <span class="ico">🔥</span><span id="streakVal">0</span>
+    </span>
+    <button class="reset" id="resetBtn" title="Smazat pokrok">↺ reset</button>
+  </div>
+</header>
+
+<main id="home" class="view">
+  <h1>Dobrý den, studente! <span class="accent">profil učení</span></h1>
+  <p class="sub">Vyber téma a začni trénovat. Můžeš si jich zvolit kolik chceš a v libovolném pořadí.</p>
+  <p class="progress-line"><span id="doneOf">0 z 12</span> témat zvládnuto</p>
+  <section id="tilesGrid" class="tiles"></section>
+</main>
+
+<main id="quiz" class="view hidden">
+  <div class="quiz-head">
+    <button class="back" id="backBtn">← zpět</button>
+    <div class="quiz-progress">
+      <div class="bar"><div id="bar" class="bar-fill"></div></div>
+      <span id="cardCounter">1 / 5</span>
+    </div>
+    <div class="hearts" id="hearts" title="Životy v levelu">♥ ♥ ♥</div>
+  </div>
+
+  <article class="card" id="card">
+    <div class="card-topic" id="cardTopic">Téma</div>
+    <h2 class="card-q" id="cardQ">Otázka…</h2>
+    <div class="card-answer hidden" id="cardA">Odpověď…</div>
+    <div class="card-actions" id="actionsReveal">
+      <button class="btn btn-primary" id="revealBtn">Zobrazit modelovou odpověď</button>
+    </div>
+    <div class="card-actions hidden" id="actionsRate">
+      <button class="btn btn-danger" id="noBtn">Nevěděl jsem</button>
+      <button class="btn btn-warn" id="kindaBtn">Částečně</button>
+      <button class="btn btn-success" id="yesBtn">Uměl jsem</button>
+    </div>
+  </article>
+</main>
+
+<main id="result" class="view hidden">
+  <div class="result-card">
+    <div class="trophy">🏆</div>
+    <h2 id="resultTitle">Level dokončen!</h2>
+    <p id="resultSub">Skvělá práce</p>
+    <div class="result-stats">
+      <div><strong id="rXp">+0</strong><span>XP</span></div>
+      <div><strong id="rRight">0/0</strong><span>uměl jsem</span></div>
+      <div><strong id="rLevel">L1</strong><span>level tématu</span></div>
+    </div>
+    <div class="result-actions">
+      <button class="btn btn-primary" id="repeatBtn">Opakovat téma</button>
+      <button class="btn btn-ghost" id="homeBtn">Zpět na přehled</button>
+    </div>
+  </div>
+</main>
+
+<footer class="foot">EMM trenér · samohodnocení · pokrok se ukládá lokálně v prohlížeči</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
